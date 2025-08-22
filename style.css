@@ -1,0 +1,50 @@
+body {
+  font-family: system-ui, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #f9fafb;
+  color: #333;
+}
+
+header {
+  background: #2563eb;
+  color: white;
+  padding: 1rem;
+  text-align: center;
+}
+
+#calendar {
+  overflow-x: auto;
+  white-space: nowrap;
+  padding: 1rem;
+  background: #fff;
+  border-bottom: 1px solid #ddd;
+}
+
+.date-btn {
+  display: inline-block;
+  margin: 0 5px;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  border: 1px solid #2563eb;
+  color: #2563eb;
+  background: white;
+  cursor: pointer;
+}
+
+.date-btn.active {
+  background: #2563eb;
+  color: white;
+}
+
+#plans {
+  padding: 1rem;
+}
+
+.plan-card {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}

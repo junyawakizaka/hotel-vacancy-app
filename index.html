@@ -1,128 +1,25 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <title>ホテル空室カレンダー</title>
-  <style>
-    body { font-family: sans-serif; margin: 0; padding: 0; }
-    header { background: #4a90e2; color: white; padding: 1rem; text-align: center; }
-    .calendar-container { overflow-x: auto; white-space: nowrap; border-bottom: 2px solid #ddd; }
-    table { border-collapse: collapse; min-width: 100%; }
-    th, td {
-      border: 1px solid #ccc;
-      padding: 0.5rem;
-      text-align: center;
-      min-width: 40px;
-    }
-    th { background: #f0f0f0; position: sticky; top: 0; }
-    td.available { background: #e6ffe6; cursor: pointer; }
-    td.unavailable { background: #ffe6e6; color: #888; }
-    .plans { padding: 1rem; }
-    .hotel-card {
-      margin: 1rem 0;
-      padding: 1rem;
-      border-radius: 8px;
-      background: #fafafa;
-      border: 1px solid #ddd;
-    }
-    .hotel-card h3 { margin-top: 0; }
-    .plan { margin: 0.5rem 0; padding: 0.5rem; border-bottom: 1px solid #eee; }
-    .plan a { color: #4a90e2; text-decoration: none; }
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ホテル空室検索</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <header>
-    <h1>ホテル空室カレンダー</h1>
+    <h1>ホテル空室検索</h1>
   </header>
 
-  <div class="calendar-container">
-    <table id="calendar"></table>
-  </div>
+  <main>
+    <div id="calendar"></div>
+    <div id="plans"></div>
+  </main>
 
-  <div id="plans" class="plans">
-    <h2>プラン一覧</h2>
-    <div id="plan-list"></div>
-  </div>
+  <footer>
+    <p>Powered by Rakuten API + Azure Static Web Apps</p>
+  </footer>
 
-  <script>
-    // ▼ Azure Blob の公開URLをここに設定してください
-    const VACANCY_URL = "https://hotelcalendarstorage.blob.core.windows.net/results/vacancy.json";
-
-    const hotels = {
-      "74732": "DLH",
-      "74733": "MIR",
-      "183493": "TSH",
-      "181695": "APA",
-      "189000": "FSH"
-    };
-
-    async function loadData() {
-      const res = await fetch(VACANCY_URL);
-      const vacancy = await res.json();
-
-      const today = new Date();
-      const end = new Date(today.getFullYear(), today.getMonth() + 2, 0); // 翌月末
-      const dates = [];
-      for (let d = new Date(today); d <= end; d.setDate(d.getDate() + 1)) {
-        dates.push(new Date(d));
-      }
-
-      const calendar = document.getElementById("calendar");
-      let html = "<tr><th>ホテル</th>";
-      dates.forEach(d => {
-        html += `<th>${d.getMonth()+1}/${d.getDate()}</th>`;
-      });
-      html += "</tr>";
-
-      Object.keys(hotels).forEach(hotelNo => {
-        html += `<tr><td>${hotels[hotelNo]}</td>`;
-        dates.forEach(d => {
-          const ds = d.toISOString().split("T")[0];
-          const plans = vacancy[hotelNo]?.[ds] || [];
-          const available = plans.some(p => p.available);
-          if (available) {
-            html += `<td class="available" onclick="selectDate('${ds}')">〇</td>`;
-          } else {
-            html += `<td class="unavailable">×</td>`;
-          }
-        });
-        html += "</tr>";
-      });
-
-      calendar.innerHTML = html;
-    }
-
-    function selectDate(date) {
-      renderPlansForDate(date);
-      document.getElementById("plans").scrollIntoView({ behavior: "smooth" });
-    }
-
-    async function renderPlansForDate(date) {
-      const res = await fetch(VACANCY_URL);
-      const vacancy = await res.json();
-
-      const planList = document.getElementById("plan-list");
-      planList.innerHTML = "";
-
-      Object.keys(vacancy).forEach(hotelNo => {
-        const plans = vacancy[hotelNo]?.[date] || [];
-        if (plans.length > 0) {
-          const card = document.createElement("div");
-          card.className = "hotel-card";
-          card.id = "hotel-" + hotelNo;
-          card.innerHTML = `<h3>${plans[0].hotelName}</h3>`;
-          plans.forEach(p => {
-            if (p.available) {
-              card.innerHTML += `<div class="plan"><a href="${p.url}" target="_blank">${p.planName}</a></div>`;
-            }
-          });
-          planList.appendChild(card);
-        }
-      });
-    }
-
-    // 初期ロード
-    loadData();
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
