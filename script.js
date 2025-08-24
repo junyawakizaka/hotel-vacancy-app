@@ -1,7 +1,7 @@
 // ====== 設定（ここを書き換えてください） ======
 const CONFIG = {
   VACANCY_JSON_URL: 'https://hotelcalendarstorage.blob.core.windows.net/results/vacancy.json',
-  HOTELS_JSON_URL:   'https://hotelcalendarstorage.blob.core.windows.net/config/hotels.json',
+  HOTELS_JSON_URL: 'https://hotelcalendarstorage.blob.core.windows.net/config/hotelNos.json',
   // 失敗時のフォールバック（同じサイト直下に置いた場合）
   FALLBACK_LOCAL: true,
 };
@@ -267,3 +267,4 @@ document.getElementById('btnNextDay').addEventListener('click', () => moveDay(1)
     alert('データの読み込みに失敗しました。JSONのURLまたはCORS設定をご確認ください。');
   }
 })();
+
