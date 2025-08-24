@@ -1,62 +1,21 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>空室カレンダー</title>
-  <link rel="stylesheet" href="./style.css" />
-  <meta name="description" content="ディズニー公式ホテルなどの空室カレンダー。○タップで当日の各ホテルのプランを表示します。">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ホテル空室カレンダー</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header class="app-header">
-    <h1>空室カレンダー</h1>
-    <p class="sub">○ をタップすると下に当日のプラン一覧が出ます</p>
+  <header class="header">
+    <h1>ホテル空室カレンダー</h1>
+    <p id="last-updated" class="updated">最終更新: 読み込み中...</p>
   </header>
 
-  <main>
-    <!-- カレンダー -->
-    <section id="calendar-section" class="card">
-      <div class="calendar-toolbar">
-        <button id="btnToday" class="btn">今日へ</button>
-        <div class="legend">
-          <span class="dot ok"></span>空室あり
-          <span class="dot ng"></span>空室なし
-        </div>
-      </div>
-
-      <div class="calendar-wrap">
-        <table class="matrix" id="calendarTable" aria-label="空室カレンダー">
-          <thead>
-            <tr id="calHeaderRow">
-              <th class="sticky first empty" aria-hidden="true"></th>
-              <!-- 日付ヘッダをJSで埋める -->
-            </tr>
-          </thead>
-          <tbody id="calBody">
-            <!-- ホテル行をJSで埋める -->
-          </tbody>
-        </table>
-      </div>
-      <div class="hint">表示期間：本日〜翌月末</div>
-    </section>
-
-    <!-- プラン一覧 -->
-    <section id="plans" class="card">
-      <div class="plans-toolbar">
-        <button id="btnPrevDay" class="btn" aria-label="前日">← 前日</button>
-        <h2 id="plansTitle" class="plans-title">選択日：-</h2>
-        <button id="btnNextDay" class="btn" aria-label="翌日">翌日 →</button>
-      </div>
-      <div id="plansList" class="plans-list">
-        <div class="empty">日付を選んでください</div>
-      </div>
-    </section>
+  <main class="container">
+    <div id="hotel-list" class="list"></div>
   </main>
 
-  <footer class="app-footer">
-    <small>© 空室ウォッチ</small>
-  </footer>
-
-  <script src="./app.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
