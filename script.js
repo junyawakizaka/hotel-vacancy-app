@@ -15,7 +15,6 @@ const CONFIG = {
 
 // 名前と略称のフォールバック（hotels.jsonに無い場合に使用）
 const HOTEL_NAME_MAP = {
-  "181695": "アパホテル〈品川戸越駅前〉",
   "183493": "トイストーリーホテル",
   "74733":  "ミラコスタ",
   "189000": "ファンタジースプリングスホテル",
@@ -267,4 +266,5 @@ document.getElementById('btnNextDay').addEventListener('click', () => moveDay(1)
     alert('データの読み込みに失敗しました。JSONのURLまたはCORS設定をご確認ください。');
   }
 })();
+
 
