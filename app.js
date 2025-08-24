@@ -1,269 +1,146 @@
-// ====== 設定（ここを書き換えてください） ======
-const CONFIG = {
-  VACANCY_JSON_URL: 'https://hotelcalendarstorage.blob.core.windows.net/results/vacancy.json',
-  HOTELS_JSON_URL: 'https://hotelcalendarstorage.blob.core.windows.net/config/hotelNos.json',
-  // 失敗時のフォールバック（同じサイト直下に置いた場合）
-  FALLBACK_LOCAL: true,
+// ====== 設定（環境に合わせて必要なら修正） ======
+const HOTELS_JSON_URL   = "https://hotelcalendarstorage.blob.core.windows.net/config/hotelNos.json";
+const VACANCY_JSON_URL  = "https://hotelcalendarstorage.blob.core.windows.net/results/vacancy.json";
+
+// 省略名（UIでチップに表示）
+const HOTEL_ABBR_MAP = {
+  "74732": "DLH", // ディズニーランドホテル
+  "74733": "MIR", // ミラコスタ
+  "183493": "TSH", // トイストーリーホテル
+  "189000": "FSH", // ファンタジースプリングスホテル
+  "181695": "APA"  // アパホテル〈品川戸越駅前〉
 };
 
-// （任意）クエリで上書き：?vacancy=...&hotels=...
-(() => {
-  const u = new URL(location.href);
-  if (u.searchParams.get('vacancy')) CONFIG.VACANCY_JSON_URL = u.searchParams.get('vacancy');
-  if (u.searchParams.get('hotels'))  CONFIG.HOTELS_JSON_URL   = u.searchParams.get('hotels');
-})();
-
-// 名前と略称のフォールバック（hotels.jsonに無い場合に使用）
-const HOTEL_NAME_MAP = {
+// 最終フォールバック（vacancy.json内に名前が見つからない時だけ使用）
+const HOTEL_NAME_FALLBACK = {
   "181695": "アパホテル〈品川戸越駅前〉",
   "183493": "トイストーリーホテル",
   "74733":  "ミラコスタ",
   "189000": "ファンタジースプリングスホテル",
-  "74732":  "ディズニーランドホテル",
-};
-const HOTEL_ABBR_MAP = {
-  "181695":"APA","183493":"TSH","74733":"MIR","189000":"FSH","74732":"DLH"
+  "74732":  "ディズニーランドホテル"
 };
 
-// ユーティリティ
-const fmt = (d) => d.toISOString().slice(0,10);
-const addDays = (d, n) => { const x=new Date(d); x.setDate(x.getDate()+n); return x; };
-const lastDayOfNextMonth = (base) => {
-  const d = new Date(base); d.setDate(1);
-  d.setMonth(d.getMonth()+2, 0); // 翌々月0日 = 翌月末
-  return d;
-};
-const weekday = ["日","月","火","水","木","金","土"];
-const isWeekend = (d) => d.getDay()===0 || d.getDay()===6;
-
-// 状態
-let hotels = [];        // [{no,name,abbr}, ...]
-let vacancy = {};       // { [hotelNo]: { [yyyy-mm-dd]: [ {planName,url,available,...}, ...] } }
-let dateList = [];      // [Date, ...]
-let selectedDate = null;
-
-async function safeFetch(url){
-  const res = await fetch(url, { cache: 'no-cache' });
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  return res.json();
+// ====== ユーティリティ ======
+function fmtJP(dateStr) {
+  // "2025-08-21" -> "8/21(木)"
+  const d = new Date(dateStr + "T09:00:00"); // JSTずれ対策
+  const w = "日月火水木金土"[d.getDay()];
+  return `${d.getMonth()+1}/${d.getDate()}(${w})`;
 }
 
-async function loadJSON(){
-  // hotels.json
-  let hotelsData;
-  try {
-    hotelsData = await safeFetch(CONFIG.HOTELS_JSON_URL);
-  } catch (e) {
-    if (CONFIG.FALLBACK_LOCAL) {
-      try { hotelsData = await safeFetch('./hotels.json'); } catch(e2){ throw e; }
-    } else { throw e; }
-  }
-
-  // 形の揺れに対応
-  // 例1: { "hotels": ["74732","74733", ...] }
-  // 例2: { "hotels": { "74732": {"name":"...", "abbr":"..."} , ... } }
-  const list = [];
-  if (Array.isArray(hotelsData.hotels)) {
-    for (const no of hotelsData.hotels) {
-      const s = String(no);
-      list.push({ no:s, name:HOTEL_NAME_MAP[s]||s, abbr:HOTEL_ABBR_MAP[s]||s });
-    }
-  } else if (hotelsData.hotels && typeof hotelsData.hotels === 'object') {
-    for (const [no, info] of Object.entries(hotelsData.hotels)) {
-      list.push({
-        no: String(no),
-        name: info.name || HOTEL_NAME_MAP[no] || String(no),
-        abbr: info.abbr || HOTEL_ABBR_MAP[no] || String(no)
-      });
-    }
-  } else {
-    // フォールバック：固定マップ順
-    for (const no of Object.keys(HOTEL_NAME_MAP)) {
-      list.push({ no, name: HOTEL_NAME_MAP[no], abbr: HOTEL_ABBR_MAP[no]||no });
-    }
-  }
-  hotels = list;
-
-  // vacancy.json
-  try {
-    vacancy = await safeFetch(CONFIG.VACANCY_JSON_URL);
-  } catch (e) {
-    if (CONFIG.FALLBACK_LOCAL) {
-      try { vacancy = await safeFetch('./vacancy.json'); } catch(e2){ throw e; }
-    } else { throw e; }
-  }
+function sortDateKeys(keys) {
+  return keys.slice().sort((a,b)=> new Date(a) - new Date(b));
 }
 
-function buildDates(){
-  const today = new Date(); today.setHours(0,0,0,0);
-  const end = lastDayOfNextMonth(today);
-  const out = [];
-  for (let d=new Date(today); d<=end; d=addDays(d,1)) out.push(new Date(d));
-  dateList = out;
-  selectedDate = fmt(today);
-}
+// vacancy.json からホテル名を抽出（最優先の取得方法）
+function deriveNameFromVacancy(hotelNo, vacancyObj) {
+  const dayMap = vacancyObj[hotelNo];
+  if (!dayMap || typeof dayMap !== "object") return null;
 
-function renderCalendar(){
-  const headerRow = document.getElementById('calHeaderRow');
-  const body = document.getElementById('calBody');
-  // ヘッダ
-  for (const d of dateList) {
-    const th = document.createElement('th');
-    const day = d.getDate();
-    const w = weekday[d.getDay()];
-    th.textContent = `${day}(${w})`;
-    if (d.getDay()===6) th.classList.add('weekend-sat');
-    if (d.getDay()===0) th.classList.add('weekend-sun');
-    if (fmt(d) === selectedDate) th.classList.add('today');
-    headerRow.appendChild(th);
-  }
-  // 本体
-  body.innerHTML = '';
-  for (const h of hotels) {
-    const tr = document.createElement('tr');
-    const th = document.createElement('th');
-    th.className = 'first sticky';
-    th.innerHTML = `${h.abbr}<small>${h.name}</small>`;
-    tr.appendChild(th);
-
-    for (const d of dateList) {
-      const td = document.createElement('td');
-      if (d.getDay()===6) td.classList.add('weekend-sat');
-      if (d.getDay()===0) td.classList.add('weekend-sun');
-      if (fmt(d) === selectedDate) td.classList.add('today');
-
-      const btn = document.createElement('button');
-      btn.className = 'cell-btn';
-      const has = hasAvail(h.no, fmt(d));
-      btn.textContent = has ? '○' : '×';
-      btn.classList.add(has ? 'ok':'ng');
-      if (!has) btn.disabled = false; // ×も押せるようにして「空室なし」を出す
-      btn.addEventListener('click', () => {
-        selectDate(fmt(d));
-        document.getElementById('plans').scrollIntoView({ behavior:'smooth', block:'start' });
-      });
-      td.appendChild(btn);
-      tr.appendChild(td);
-    }
-    body.appendChild(tr);
-  }
-
-  // 今日列へスクロール
-  scrollToToday();
-}
-
-function scrollToToday(){
-  const wrap = document.querySelector('.calendar-wrap');
-  const idx = dateList.findIndex(d => fmt(d)===selectedDate);
-  if (idx <= 0) return;
-  const colWidth = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--cell'),10) || 44;
-  // 左端のホテル列（sticky）分を差し引いてスクロール
-  wrap.scrollLeft = idx * (colWidth+1);
-}
-
-function hasAvail(hotelNo, ymd){
-  const d = vacancy?.[hotelNo]?.[ymd];
-  if (!Array.isArray(d)) return false;
-  return d.some(x => x && x.available === true);
-}
-
-function collectPlansFor(ymd){
-  const list = [];
-  for (const h of hotels) {
-    const items = vacancy?.[h.no]?.[ymd];
-    if (!Array.isArray(items)) continue;
-    for (const it of items) {
-      if (it.available) {
-        list.push({
-          hotelNo: h.no,
-          hotelName: it.hotelName || h.name,
-          planName: it.planName || '(プラン名不明)',
-          url: it.url || '',
-        });
+  // どれか1日の配列から hotelName を拾う
+  for (const date of Object.keys(dayMap)) {
+    const arr = dayMap[date];
+    if (Array.isArray(arr)) {
+      for (const rec of arr) {
+        if (rec && typeof rec.hotelName === "string" && rec.hotelName.trim().length) {
+          return rec.hotelName.trim();
+        }
       }
     }
   }
-  return list;
+  return null;
 }
 
-function renderPlans(){
-  const elTitle = document.getElementById('plansTitle');
-  const elList = document.getElementById('plansList');
-  elTitle.textContent = `選択日：${selectedDate}`;
-
-  const plans = collectPlansFor(selectedDate);
-  elList.innerHTML = '';
-  if (!plans.length) {
-    const div = document.createElement('div');
-    div.className = 'empty';
-    div.textContent = 'この日は空室が見つかりませんでした。';
-    elList.appendChild(div);
-    return;
+function getAvailableDates(hotelNo, vacancyObj) {
+  const dayMap = vacancyObj[hotelNo] || {};
+  const out = [];
+  for (const [date, arr] of Object.entries(dayMap)) {
+    if (Array.isArray(arr) && arr.some(x => x && x.available === true)) {
+      out.push(date);
+    }
   }
-  for (const p of plans) {
-    const card = document.createElement('div');
-    card.className = 'plan';
+  return sortDateKeys(out);
+}
+
+function getFirstPlanUrl(hotelNo, vacancyObj) {
+  const dayMap = vacancyObj[hotelNo] || {};
+  const sortedDates = sortDateKeys(Object.keys(dayMap));
+  for (const dt of sortedDates) {
+    const arr = dayMap[dt];
+    if (!Array.isArray(arr)) continue;
+    const hit = arr.find(x => x && x.available === true && typeof x.url === "string" && x.url.length);
+    if (hit) return hit.url;
+  }
+  return null;
+}
+
+// ====== 描画 ======
+function render(hotelsList, vacancyObj) {
+  const container = document.getElementById("hotel-list");
+  container.innerHTML = "";
+
+  hotelsList.forEach(hotelNo => {
+    const realName = deriveNameFromVacancy(hotelNo, vacancyObj)
+                  || HOTEL_NAME_FALLBACK[hotelNo]
+                  || `ホテルNo.${hotelNo}`;
+    const abbr = HOTEL_ABBR_MAP[hotelNo] || hotelNo;
+
+    const availDates = getAvailableDates(hotelNo, vacancyObj);
+    const plansUrl   = getFirstPlanUrl(hotelNo, vacancyObj) || `https://travel.rakuten.co.jp/HOTEL/${hotelNo}/`;
+
+    // バッジ
+    const badgeHTML = availDates.length > 0
+      ? `<span class="badge ok">空室あり</span>`
+      : `<span class="badge ng">満室</span>`;
+
+    // 日付並び（長すぎる場合は先頭10件まで）
+    const datesHTML = availDates.length
+      ? availDates.slice(0, 10).map(fmtJP).join("、") + (availDates.length > 10 ? " ほか" : "")
+      : `<span class="empty">現在、空室は見つかりませんでした。</span>`;
+
+    const card = document.createElement("div");
+    card.className = "card";
     card.innerHTML = `
-      <div class="hn">${p.hotelName}</div>
-      <div class="pn">${escapeHTML(p.planName)}</div>
+      <div class="card-head">
+        <span class="abbr">${abbr}</span>
+        <div class="name">${realName}</div>
+      </div>
+      <div class="badges">${badgeHTML}</div>
+      <div class="dates">${datesHTML}</div>
       <div class="actions">
-        <a class="link" href="${p.url}" target="_blank" rel="noopener">楽天で予約へ</a>
+        <a class="link" target="_blank" rel="noopener" href="${plansUrl}">楽天で空室を見る</a>
       </div>
     `;
-    elList.appendChild(card);
-  }
-}
 
-// 簡易エスケープ
-function escapeHTML(s){
-  return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-}
-
-// 日付移動
-function moveDay(delta){
-  const idx = dateList.findIndex(d => fmt(d)===selectedDate);
-  if (idx < 0) return;
-  const next = dateList[idx + delta];
-  if (!next) return;
-  selectDate(fmt(next));
-  document.getElementById('calendar-section').scrollIntoView({ behavior:'smooth' });
-  document.getElementById('plans').scrollIntoView({ behavior:'smooth' });
-}
-
-function selectDate(ymd){
-  selectedDate = ymd;
-  // ヘッダ/セルの today を更新
-  document.querySelectorAll('th.today, td.today').forEach(el => el.classList.remove('today'));
-  const headerRow = document.getElementById('calHeaderRow');
-  const idx = dateList.findIndex(d => fmt(d)===ymd);
-  if (idx >= 0) headerRow.children[idx+1]?.classList.add('today'); // +1 は先頭の空セル
-  // 各行の同列を today 付与
-  document.querySelectorAll('#calBody tr').forEach(tr => {
-    const td = tr.children[idx+1];
-    if (td) td.classList.add('today');
+    container.appendChild(card);
   });
-  renderPlans();
-  scrollToToday();
 }
 
-// イベント
-document.getElementById('btnToday').addEventListener('click', () => {
-  const today = fmt(new Date());
-  selectDate(today);
-  document.getElementById('calendar-section').scrollIntoView({ behavior:'smooth' });
-});
-document.getElementById('btnPrevDay').addEventListener('click', () => moveDay(-1));
-document.getElementById('btnNextDay').addEventListener('click', () => moveDay(1));
+// ====== 初期ロード ======
+(async function init() {
+  const updatedEl = document.getElementById("last-updated");
+  try {
+    // 並列取得（キャッシュ回避クエリ付き）
+    const [hotelsRes, vacancyRes] = await Promise.all([
+      fetch(HOTELS_JSON_URL + "?t=" + Date.now()),
+      fetch(VACANCY_JSON_URL  + "?t=" + Date.now())
+    ]);
 
-// 初期化
-(async function init(){
-  try{
-    await loadJSON();
-    buildDates();
-    renderCalendar();
-    renderPlans();
-  }catch(e){
+    if (!hotelsRes.ok) throw new Error("hotels.json の取得に失敗: " + hotelsRes.status);
+    if (!vacancyRes.ok) throw new Error("vacancy.json の取得に失敗: " + vacancyRes.status);
+
+    const hotelsJson  = await hotelsRes.json();        // { "hotels": ["183493","74733", ...] }
+    const vacancyJson = await vacancyRes.json();       // { "74732": { "2025-08-20": [ ... ] }, ... }
+
+    // hotels.json の並び順に表示
+    const hotelNos = Array.isArray(hotelsJson.hotels) ? hotelsJson.hotels.map(String) : Object.keys(vacancyJson);
+
+    render(hotelNos, vacancyJson);
+    updatedEl.textContent = "最終更新: " + new Date().toLocaleString("ja-JP");
+  } catch (e) {
     console.error(e);
-    alert('データの読み込みに失敗しました。JSONのURLまたはCORS設定をご確認ください。');
+    updatedEl.textContent = "読み込みエラーが発生しました";
+    document.getElementById("hotel-list").innerHTML =
+      `<div class="card"><div class="empty">データの取得に失敗しました。時間をおいて再度お試しください。</div></div>`;
   }
 })();
