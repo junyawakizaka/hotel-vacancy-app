@@ -1,65 +1,117 @@
-:root{
-  --bg:#fafafa; --card:#fff; --txt:#222; --muted:#687076;
-  --ok:#16a34a; --ng:#d1d5db; --sat:#e8f2ff; --sun:#ffecef;
-  --accent:#2563eb; --sticky:#fff;
-  --cell:44px; /* 列幅（スマホ） */
-  --radius:14px;
+:root {
+  --bg: #f7fafc;
+  --card: #fff;
+  --text: #222;
+  --muted: #6b7280;
+  --ok: #16a34a;
+  --ng: #dc2626;
+  --link: #2563eb;
+  --shadow: 0 4px 16px rgba(0,0,0,.08);
 }
-*{box-sizing:border-box}
-html,body{margin:0;padding:0;background:var(--bg);color:var(--txt);font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Hiragino Kaku Gothic ProN","Yu Gothic UI","Noto Sans JP",sans-serif;line-height:1.45}
-h1,h2,p{margin:0}
 
-.app-header{padding:14px 16px 8px}
-.app-header h1{font-size:20px;font-weight:700}
-.sub{color:var(--muted);font-size:12px;margin-top:4px}
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+               "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Noto Sans JP",
+               "Meiryo", Arial, "Apple Color Emoji", "Segoe UI Emoji", sans-serif;
+}
 
-.card{background:var(--card);border-radius:var(--radius);margin:10px 12px;padding:10px 10px 8px;box-shadow:0 2px 10px rgba(0,0,0,.04)}
+.header {
+  padding: 16px 16px 8px;
+  text-align: center;
+}
+.header h1 {
+  margin: 0 0 8px;
+  font-size: 20px;
+  font-weight: 700;
+}
+.updated {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
 
-.calendar-toolbar,.plans-toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
-.btn{padding:8px 10px;border-radius:12px;border:1px solid #e5e7eb;background:#fff;font-size:13px}
-.btn:active{transform:translateY(1px)}
-.legend{display:flex;gap:12px;font-size:12px;color:var(--muted)}
-.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px;vertical-align:-1px}
-.dot.ok{background:var(--ok)}
-.dot.ng{background:var(--ng)}
+.container {
+  padding: 8px 12px 24px;
+  max-width: 720px;
+  margin: 0 auto;
+}
 
-.calendar-wrap{overflow-x:auto; -webkit-overflow-scrolling:touch; border-radius:12px; border:1px solid #eef0f3}
-.matrix{border-collapse:separate;border-spacing:0;min-width:100%}
-.matrix th,.matrix td{border-right:1px solid #f0f2f5;border-bottom:1px solid #f0f2f5;text-align:center;min-width:var(--cell);height:42px}
-.matrix thead th{font-size:12px;font-weight:600;color:#4b5563;background:#f9fafb;position:sticky;top:0;z-index:3}
-.matrix thead th.weekend-sat{background:var(--sat)}
-.matrix thead th.weekend-sun{background:var(--sun)}
-.matrix th.first{min-width:76px;padding:0 8px}
-.matrix tbody th{position:sticky;left:0;background:var(--sticky);z-index:2;text-align:left;font-weight:700;font-size:13px}
-.matrix tbody th small{display:block;color:var(--muted);font-weight:500;font-size:11px}
-.matrix td{background:#fff}
-.matrix td.weekend-sat{background:linear-gradient(180deg,var(--sat),#fff)}
-.matrix td.weekend-sun{background:linear-gradient(180deg,var(--sun),#fff)}
+.list {
+  display: grid;
+  gap: 12px;
+}
 
-.cell-btn{display:flex;align-items:center;justify-content:center;width:100%;height:100%;border:none;background:transparent;font-size:16px;cursor:pointer}
-.cell-btn.ok{color:var(--ok)}
-.cell-btn.ng{color:#c4c7cc}
-.cell-btn:disabled{opacity:.5;cursor:default}
+.card {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 14px;
+  box-shadow: var(--shadow);
+}
 
-.hint{margin-top:6px;color:var(--muted);font-size:11px}
+.card-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.abbr {
+  display: inline-block;
+  min-width: 38px;
+  padding: 4px 6px;
+  text-align: center;
+  border-radius: 999px;
+  background: #eef2ff;
+  font-weight: 700;
+  font-size: 12px;
+}
+.name {
+  font-size: 15px;
+  font-weight: 700;
+}
 
-.plans-title{font-size:16px;font-weight:700}
-.plans-list{display:grid;grid-template-columns:1fr;gap:10px;margin-top:10px}
-.plan{border:1px solid #eef0f3;border-radius:12px;padding:10px;background:#fff}
-.plan .hn{font-size:14px;font-weight:700;margin-bottom:6px}
-.plan .pn{font-size:13px;color:#374151;margin-bottom:8px}
-.plan .actions{display:flex;gap:8px}
-.plan .link{display:inline-block;font-size:13px;padding:8px 10px;border-radius:10px;background:var(--accent);color:#fff;text-decoration:none}
-.plan .link:active{transform:translateY(1px)}
-.empty{color:var(--muted);text-align:center;padding:20px 8px}
+.badges {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin: 6px 0 2px;
+}
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+}
+.badge.ok { background: var(--ok); }
+.badge.ng { background: var(--ng); background-image: linear-gradient(45deg, #ef4444, #dc2626); }
 
-.app-footer{padding:20px 0 34px;text-align:center;color:var(--muted);font-size:12px}
+.dates {
+  margin-top: 8px;
+  font-size: 13px;
+  color: #111827;
+  line-height: 1.6;
+}
 
-/* today 枠を少し目立たせる */
-th.today, td.today{outline:2px solid #cfe1ff; outline-offset:-2px}
+.actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+}
+a.link {
+  font-size: 14px;
+  color: var(--link);
+  text-decoration: none;
+}
+a.link:hover { text-decoration: underline; }
 
-/* 小さめ端末で若干詰める */
-@media (max-width:360px){
-  :root{ --cell:40px }
-  .matrix th.first{min-width:70px}
+.empty {
+  color: var(--muted);
+  font-size: 13px;
 }
