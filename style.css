@@ -93,10 +93,12 @@ th.today, td.today{outline:2px solid #cfe1ff; outline-offset:-2px}
 .plan-card .pn {
   font-size: 13px;
   margin-bottom: 8px;
-  word-wrap: break-word;       /* 長い単語を折り返し */
-  overflow-wrap: break-word;   /* モダンブラウザ向け */
-  white-space: normal;         /* 強制改行も許可 */
+  word-wrap: break-word;
+  overflow-wrap: anywhere;   /* ← より強力に折り返し */
+  white-space: normal;       /* 折り返しを許可 */
+  display: block;            /* ← 強制的にブロック要素化 */
 }
+
 
 .plan-card .actions {
   margin-top: auto;
@@ -113,4 +115,5 @@ th.today, td.today{outline:2px solid #cfe1ff; outline-offset:-2px}
   color: #fff;
   text-decoration: none;
 }
+
 
