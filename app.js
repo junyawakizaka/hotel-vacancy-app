@@ -26,7 +26,12 @@ const HOTEL_ABBR_MAP = {
 };
 
 // ユーティリティ
-const fmt = (d) => d.toISOString().slice(0,10);
+const fmt = (d) => {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+};
 const addDays = (d, n) => { const x=new Date(d); x.setDate(x.getDate()+n); return x; };
 const lastDayOfNextMonth = (base) => {
   const d = new Date(base); d.setDate(1);
@@ -267,3 +272,4 @@ document.getElementById('btnNextDay').addEventListener('click', () => moveDay(1)
     alert('データの読み込みに失敗しました。JSONのURLまたはCORS設定をご確認ください。');
   }
 })();
+
