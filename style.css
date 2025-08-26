@@ -83,6 +83,8 @@ th.today, td.today{outline:2px solid #cfe1ff; outline-offset:-2px}
 
 .plan-card {
   flex: 0 0 80%;
+  max-width: 80%;        /* ← 横幅を制限 */
+  box-sizing: border-box;
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
@@ -115,5 +117,6 @@ th.today, td.today{outline:2px solid #cfe1ff; outline-offset:-2px}
   color: #fff;
   text-decoration: none;
 }
+
 
 
