@@ -64,7 +64,13 @@ th.today, td.today{outline:2px solid #cfe1ff; outline-offset:-2px}
   .matrix th.first{min-width:70px}
 }
 
-.hotel-section { margin-bottom: 20px; }
+.hotel-section {
+  margin-bottom: 20px;
+  max-width: 100%;   /* 親幅を超えない */
+  min-width: 0;      /* flex内の自動拡張を防ぐ */
+  overflow: hidden;  /* 念のための保険（スクロールは子の .plan-scroll に任せる） */
+}
+
 .hotel-section h3 {
   font-size: 14px;
   font-weight: 700;
@@ -79,6 +85,7 @@ th.today, td.today{outline:2px solid #cfe1ff; outline-offset:-2px}
   -webkit-overflow-scrolling: touch;
   scroll-snap-type: x mandatory;
   padding-bottom: 8px;
+  max-width: 100%;   /* ← 横スクロールはここでだけ発生 */
 }
 
 .plan-card {
@@ -117,6 +124,7 @@ th.today, td.today{outline:2px solid #cfe1ff; outline-offset:-2px}
   color: #fff;
   text-decoration: none;
 }
+
 
 
 
