@@ -172,52 +172,71 @@ function hasAvail(hotelNo, ymd){
   return d.some(x => x && x.available === true);
 }
 
-function collectPlansFor(ymd){
+// ホテルごとにプランを集める
+function collectPlansFor(ymd) {
   const list = [];
   for (const h of hotels) {
     const items = vacancy?.[h.no]?.[ymd];
     if (!Array.isArray(items)) continue;
-    for (const it of items) {
-      if (it.available) {
-        list.push({
-          hotelNo: h.no,
-          hotelName: it.hotelName || h.name,
-          planName: it.planName || '(プラン名不明)',
-          url: it.url || '',
-        });
-      }
+
+    const plans = items
+      .filter(it => it.available)
+      .map(it => ({
+        hotelNo: h.no,
+        hotelName: it.hotelName || h.name,
+        planName: it.planName || '(プラン名不明)',
+        url: it.url || '',
+      }));
+
+    if (plans.length) {
+      list.push({ hotel: h, plans });
     }
   }
   return list;
 }
 
-function renderPlans(){
+// プラン描画（横スクロールUI対応）
+function renderPlans() {
   const elTitle = document.getElementById('plansTitle');
   const elList = document.getElementById('plansList');
   elTitle.textContent = `選択日：${selectedDate}`;
 
-  const plans = collectPlansFor(selectedDate);
+  const hotelPlans = collectPlansFor(selectedDate);
   elList.innerHTML = '';
-  if (!plans.length) {
+
+  if (!hotelPlans.length) {
     const div = document.createElement('div');
     div.className = 'empty';
     div.textContent = 'この日は空室が見つかりませんでした。';
     elList.appendChild(div);
     return;
   }
-  for (const p of plans) {
-    const card = document.createElement('div');
-    card.className = 'plan';
-    card.innerHTML = `
-      <div class="hn">${p.hotelName}</div>
-      <div class="pn">${escapeHTML(p.planName)}</div>
-      <div class="actions">
-        <a class="link" href="${p.url}" target="_blank" rel="noopener">楽天で予約へ</a>
-      </div>
-    `;
-    elList.appendChild(card);
+
+  for (const hp of hotelPlans) {
+    const section = document.createElement('section');
+    section.className = 'hotel-section';
+    section.innerHTML = `<h3>${hp.hotel.name} - ${selectedDate}</h3>`;
+
+    const scroll = document.createElement('div');
+    scroll.className = 'plan-scroll';
+
+    for (const p of hp.plans) {
+      const card = document.createElement('div');
+      card.className = 'plan-card';
+      card.innerHTML = `
+        <div class="pn">${escapeHTML(p.planName)}</div>
+        <div class="actions">
+          <a class="link" href="${p.url}" target="_blank" rel="noopener">楽天で予約</a>
+        </div>
+      `;
+      scroll.appendChild(card);
+    }
+
+    section.appendChild(scroll);
+    elList.appendChild(section);
   }
 }
+
 
 // 簡易エスケープ
 function escapeHTML(s){
@@ -272,4 +291,5 @@ document.getElementById('btnNextDay').addEventListener('click', () => moveDay(1)
     alert('データの読み込みに失敗しました。JSONのURLまたはCORS設定をご確認ください。');
   }
 })();
+
 
