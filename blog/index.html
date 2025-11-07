@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ディズニー旅行ガイド・ホテル特集</title>
+  <title>ディズニーホテル空室ブログ</title>
   <link rel="stylesheet" href="../style.css">
 </head>
 <body>
@@ -15,22 +15,24 @@
   <main id="blog-list"></main>
 
   <script>
-    fetch("posts.json")
-      .then(res => res.json())
-      .then(posts => {
-        const list = document.getElementById("blog-list");
-        posts.forEach(post => {
-          const item = document.createElement("div");
-          item.className = "blog-card";
-          item.innerHTML = `
-            <a href="${post.slug}/index.html">
-              <h2>${post.title}</h2>
-              <p class="date">${post.date}</p>
-              <p>${post.description}</p>
-            </a>`;
-          list.appendChild(item);
-        });
-      });
+    // postsフォルダ内の.mdファイルを取得（手動リスト）
+    const posts = [
+      { slug: "sample", title: "サンプル記事", date: "2025-11-07", description: "ディズニーホテルの基本情報" },
+      // ここに追記していく（将来的に自動化も可能）
+    ];
+
+    const list = document.getElementById("blog-list");
+    posts.forEach(post => {
+      const item = document.createElement("div");
+      item.className = "blog-card";
+      item.innerHTML = `
+        <a href="post.html?slug=${post.slug}">
+          <h2>${post.title}</h2>
+          <p>${post.date}</p>
+          <p>${post.description}</p>
+        </a>`;
+      list.appendChild(item);
+    });
   </script>
 </body>
 </html>
