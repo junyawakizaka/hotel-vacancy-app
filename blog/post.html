@@ -2,34 +2,37 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title id="title">読み込み中…</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>記事詳細</title>
   <link rel="stylesheet" href="../style.css">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
-  <main class="blog-container blog-post" id="post-area">読み込み中...</main>
+  <header>
+    <h1 id="post-title">読み込み中...</h1>
+  </header>
+  <main id="post-content" style="padding:16px;"></main>
 
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script>
     const params = new URLSearchParams(location.search);
-    const slug = params.get('slug');
-    const postArea = document.getElementById('post-area');
+    const slug = params.get("slug");
 
     if (!slug) {
-      postArea.textContent = '記事が見つかりません';
+      document.getElementById("post-content").textContent = "記事が見つかりません。";
     } else {
-      fetch(`./posts/${slug}.md`)
-        .then(r => {
-          if (!r.ok) throw new Error('not found');
-          return r.text();
+      fetch(`posts/${slug}.md`)
+        .then(res => {
+          if (!res.ok) throw new Error("記事が見つかりません");
+          return res.text();
         })
         .then(md => {
-          postArea.innerHTML = marked.parse(md);
-          const firstLine = md.split('\n')[0].replace(/^#\s*/, '');
-          document.title = firstLine + ' | ディズニー旅行ガイド';
+          document.getElementById("post-content").innerHTML = marked.parse(md);
+          // Markdownの先頭見出しをタイトルに
+          const match = md.match(/^# (.+)/);
+          if (match) document.getElementById("post-title").textContent = match[1];
         })
-        .catch(() => {
-          postArea.textContent = '記事が見つかりません';
+        .catch(err => {
+          document.getElementById("post-content").textContent = err.message;
         });
     }
   </script>
