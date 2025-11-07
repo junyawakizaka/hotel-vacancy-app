@@ -2,29 +2,36 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>記事詳細</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title id="title">読み込み中…</title>
   <link rel="stylesheet" href="../style.css">
 </head>
 <body>
-  <main id="content"></main>
+  <main class="blog-container blog-post" id="post-area">読み込み中...</main>
 
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script>
-    const params = new URLSearchParams(window.location.search);
-    const slug = params.get("slug");
+    const params = new URLSearchParams(location.search);
+    const slug = params.get('slug');
+    const postArea = document.getElementById('post-area');
 
-    fetch("posts/" + slug + ".md")
-      .then(res => res.text())
-      .then(md => {
-        const html = md
-          .replace(/^# (.*$)/gim, "<h1>$1</h1>")
-          .replace(/^## (.*$)/gim, "<h2>$1</h2>")
-          .replace(/^### (.*$)/gim, "<h3>$1</h3>")
-          .replace(/\*\*(.*)\*\*/gim, "<b>$1</b>")
-          .replace(/\*(.*)\*/gim, "<i>$1</i>")
-          .replace(/\n$/gim, "<br>");
-        document.getElementById("content").innerHTML = html;
-      });
+    if (!slug) {
+      postArea.textContent = '記事が見つかりません';
+    } else {
+      fetch(`./posts/${slug}.md`)
+        .then(r => {
+          if (!r.ok) throw new Error('not found');
+          return r.text();
+        })
+        .then(md => {
+          postArea.innerHTML = marked.parse(md);
+          const firstLine = md.split('\n')[0].replace(/^#\s*/, '');
+          document.title = firstLine + ' | ディズニー旅行ガイド';
+        })
+        .catch(() => {
+          postArea.textContent = '記事が見つかりません';
+        });
+    }
   </script>
 </body>
 </html>
