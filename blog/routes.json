@@ -1,0 +1,6 @@
+{
+  "routes": [
+    { "route": "/blog/:slug", "rewrite": "/blog/post.html?slug={slug}" },
+    { "route": "/blog", "rewrite": "/blog/index.html" }
+  ]
+}
