@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ディズニーホテル空室ブログ</title>
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+  <header>
+    <h1>ディズニー旅行ガイド・ホテル特集</h1>
+    <p>空室情報やホテル選びのコツを紹介します。</p>
+  </header>
+
+  <main id="blog-list"></main>
+
+  <script>
+    fetch("posts.json")
+      .then(res => res.json())
+      .then(posts => {
+        const list = document.getElementById("blog-list");
+        posts.forEach(post => {
+          const item = document.createElement("div");
+          item.className = "blog-card";
+          item.innerHTML = `
+            <a href="post.html?slug=${post.slug}">
+              <h2>${post.title}</h2>
+              <p>${post.date}</p>
+              <p>${post.description}</p>
+            </a>`;
+          list.appendChild(item);
+        });
+      });
+  </script>
+</body>
+</html>
