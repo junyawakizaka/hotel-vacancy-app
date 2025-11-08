@@ -436,6 +436,35 @@ th.today, td.today{outline:2px solid #cfe1ff; outline-offset:-2px}
   }
 }
 
+/* --- ブログ⇔TOP 導線エリア --- */
+.blog-nav {
+  max-width: 720px;
+  margin: 10px auto 0;
+  padding: 0 14px;
+}
+.back-top {
+  display: inline-block;
+  font-size: 13px;
+  color: var(--accent);
+  text-decoration: none;
+}
+.back-top:hover {
+  text-decoration: underline;
+}
+
+.app-footer p {
+  font-size: 13px;
+  color: var(--muted);
+}
+.app-footer a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 500;
+}
+.app-footer a:hover {
+  text-decoration: underline;
+}
+
 
 
 
