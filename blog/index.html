@@ -25,12 +25,16 @@
     posts.forEach(post => {
       const item = document.createElement("div");
       item.className = "blog-card";
-      item.innerHTML = `
-        <a href="post.html?slug=${post.slug}">
-          <h2>${post.title}</h2>
-          <p>${post.date}</p>
-          <p>${post.description}</p>
-        </a>`;
+item.innerHTML = `
+  <a href="post.html?slug=${post.slug}" class="blog-card">
+    <div class="meta">
+      <span class="category">${post.category || "お知らせ"}</span>
+      <time>${post.date}</time>
+    </div>
+    <h2>${post.title}</h2>
+    <p>${post.description}</p>
+  </a>`;
+
       list.appendChild(item);
     });
   </script>
