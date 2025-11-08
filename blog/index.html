@@ -7,13 +7,15 @@
   <link rel="stylesheet" href="../style.css">
 </head>
 <body>
-  <header>
-    <h1>ディズニー旅行ガイド・ホテル特集</h1>
-    <p>空室情報やホテル選びのコツを紹介します。</p>
-  </header>
+  <body>
+  <div class="page-container">
+    <header class="page-header">
+      <h1>ディズニー旅行ガイド・ホテル特集</h1>
+      <p>空室情報やホテル選びのコツを紹介します。</p>
+    </header>
 
-  <main id="blog-list"></main>
-
+    <main id="blog-list"></main>
+  </div>
   <script>
   fetch("./posts.json") // ← blogフォルダ内にある前提
     .then(res => {
