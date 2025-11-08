@@ -315,5 +315,51 @@ th.today, td.today{outline:2px solid #cfe1ff; outline-offset:-2px}
   }
 }
 
+/* --- ブログ一覧を少しリッチに --- */
+.blog-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: 0 2px 10px rgba(0,0,0,.05);
+  padding: 14px 16px 18px;
+  text-decoration: none;
+  color: var(--txt);
+  display: block;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  border-left: 4px solid transparent;
+}
+
+.blog-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0,0,0,.08);
+  border-left-color: var(--accent);
+}
+
+.blog-card .meta {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.blog-card .category {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent);
+  margin-right: 6px;
+}
+
+.blog-card h2 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--txt);
+  margin: 0 0 6px;
+}
+
+.blog-card p {
+  font-size: 14px;
+  color: #374151;
+  line-height: 1.6;
+  margin: 0;
+}
+
 
 
