@@ -15,28 +15,32 @@
   <main id="blog-list"></main>
 
   <script>
-    // postsフォルダ内の.mdファイルを取得（手動リスト）
-    const posts = [
-      { slug: "sample", title: "サンプル記事", date: "2025-11-07", description: "ディズニーホテルの基本情報" },
-      // ここに追記していく（将来的に自動化も可能）
-    ];
-
-    const list = document.getElementById("blog-list");
-    posts.forEach(post => {
-      const item = document.createElement("div");
-      item.className = "blog-card";
-item.innerHTML = `
-  <a href="post.html?slug=${post.slug}" class="blog-card">
-    <div class="meta">
-      <span class="category">${post.category || "お知らせ"}</span>
-      <time>${post.date}</time>
-    </div>
-    <h2>${post.title}</h2>
-    <p>${post.description}</p>
-  </a>`;
-
-      list.appendChild(item);
+  fetch("./posts.json") // ← blogフォルダ内にある前提
+    .then(res => {
+      if (!res.ok) throw new Error("posts.jsonが読み込めません");
+      return res.json();
+    })
+    .then(posts => {
+      const list = document.getElementById("blog-list");
+      posts.forEach(post => {
+        const item = document.createElement("div");
+        item.className = "blog-card";
+        item.innerHTML = `
+          <a href="post.html?slug=${post.slug}" class="blog-card">
+            <div class="meta">
+              <span class="category">${post.category || "お知らせ"}</span>
+              <time>${post.date}</time>
+            </div>
+            <h2>${post.title}</h2>
+            <p>${post.description}</p>
+          </a>
+        `;
+        list.appendChild(item);
+      });
+    })
+    .catch(err => {
+      console.error("ブログ一覧の読み込みに失敗しました：", err);
     });
-  </script>
+</script>
 </body>
 </html>
