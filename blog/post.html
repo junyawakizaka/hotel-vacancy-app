@@ -11,7 +11,18 @@
   <header>
     <h1 id="post-title">読み込み中...</h1>
   </header>
+
   <main id="post-content" style="padding:16px;"></main>
+
+  <!-- ▼ ブログナビゲーション（追加） -->
+  <nav class="post-nav">
+    <a href="/blog/" class="back-list">← 記事一覧へ戻る</a>
+    <div class="post-prev-next">
+      <a id="prev-post" class="prev-post" href="#">前の記事へ</a>
+      <a id="next-post" class="next-post" href="#">次の記事へ →</a>
+    </div>
+  </nav>
+  <!-- ▲ ブログナビゲーション -->
 
   <script>
     const params = new URLSearchParams(location.search);
@@ -27,7 +38,6 @@
         })
         .then(md => {
           document.getElementById("post-content").innerHTML = marked.parse(md);
-          // Markdownの先頭見出しをタイトルに
           const match = md.match(/^# (.+)/);
           if (match) document.getElementById("post-title").textContent = match[1];
         })
@@ -35,6 +45,33 @@
           document.getElementById("post-content").textContent = err.message;
         });
     }
+
+    // ▼ 前後記事リンク生成 ---------------------
+    fetch("posts.json")
+      .then(res => res.json())
+      .then(posts => {
+        const index = posts.findIndex(p => p.slug === slug);
+        const prev = posts[index - 1];
+        const next = posts[index + 1];
+
+        const prevLink = document.getElementById("prev-post");
+        const nextLink = document.getElementById("next-post");
+
+        if (prev) {
+          prevLink.href = `post.html?slug=${prev.slug}`;
+          prevLink.textContent = `← ${prev.title}`;
+        } else {
+          prevLink.style.display = "none";
+        }
+
+        if (next) {
+          nextLink.href = `post.html?slug=${next.slug}`;
+          nextLink.textContent = `${next.title} →`;
+        } else {
+          nextLink.style.display = "none";
+        }
+      });
+    // ▲ 前後記事リンク生成 ---------------------
   </script>
 </body>
 </html>
