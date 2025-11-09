@@ -465,6 +465,40 @@ th.today, td.today{outline:2px solid #cfe1ff; outline-offset:-2px}
   text-decoration: underline;
 }
 
+/* --- 記事ページ内ナビゲーション --- */
+.post-nav {
+  max-width: 720px;
+  margin: 40px auto 60px;
+  padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  font-size: 14px;
+}
+
+.back-list {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 500;
+}
+.back-list:hover {
+  text-decoration: underline;
+}
+
+.post-prev-next {
+  display: flex;
+  justify-content: space-between;
+}
+
+.prev-post, .next-post {
+  color: var(--accent);
+  text-decoration: none;
+}
+.prev-post:hover,
+.next-post:hover {
+  text-decoration: underline;
+}
+
 
 
 
