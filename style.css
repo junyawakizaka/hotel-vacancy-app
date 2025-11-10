@@ -571,6 +571,107 @@ main#post-content img {
   text-decoration: underline;
 }
 
+/* ========== 統一デザイン：末尾追記用（ここから） ========== */
+
+/* ベース（追記で上書き） */
+body {
+  font-family: "Hiragino Sans", "Noto Sans JP", system-ui, -apple-system, "Segoe UI", Roboto, "Yu Gothic UI", sans-serif;
+  background-color: #f9f9fb;
+  color: #222;
+  line-height: 1.8;
+  margin: 0;
+  padding: 0;
+}
+
+/* 全体レイアウト（TOP基準） */
+.page-container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+/* ヘッダー（TOP/BLOG 共通見出し） */
+header, .page-header {
+  text-align: center;
+  margin-bottom: 24px;
+  padding: 32px 16px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+header h1 {
+  font-size: 1.8rem;
+  margin: 0 0 8px;
+}
+header p {
+  color: #666;
+  font-size: 0.95rem;
+}
+
+/* リンク共通 */
+a { color: #0066cc; text-decoration: none; transition: 0.2s; }
+a:hover { text-decoration: underline; }
+
+/* ブログ一覧：カードレイアウト（上書き） */
+#blog-list { display: grid; gap: 20px; }
+.blog-card {
+  display: block;
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.blog-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+.blog-card .meta { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; font-size:0.9rem; color:#888; }
+.blog-card .category { background:#eef3ff; color:#3366cc; padding:2px 8px; border-radius:6px; font-size:0.8rem; }
+
+/* 記事ページ（post） */
+#post-title { font-size:1.6rem; text-align:center; margin:0 0 24px; color:#222; }
+#post-content {
+  background:#fff;
+  border-radius:12px;
+  padding:24px;
+  box-shadow:0 2px 6px rgba(0,0,0,0.05);
+  max-width: 720px;
+  margin: 0 auto 24px;
+}
+
+/* Markdown見出し */
+#post-content h1,#post-content h2,#post-content h3 { margin-top:1.8em; color:#222; }
+#post-content h2 { border-left:4px solid #3366cc; padding-left:10px; font-size:1.3rem; }
+#post-content h3 { font-size:1.1rem; color:#333; }
+
+/* テーブル・引用・画像 */
+#post-content table { width:100%; border-collapse:collapse; margin:1.5em 0; font-size:0.95rem; }
+#post-content th,#post-content td { border:1px solid #ddd; padding:8px 10px; }
+#post-content th { background:#f0f4ff; font-weight:700; }
+#post-content blockquote { background:#f8faff; border-left:4px solid #cce; padding:10px 16px; color:#555; margin:1.5em 0; }
+#post-content img { max-width:100%; border-radius:10px; margin:16px 0; }
+
+/* ナビゲーション（一覧/前後） */
+.blog-nav, .post-nav { margin:32px 0; text-align:center; }
+.blog-nav a, .post-nav a { display:inline-block; margin:4px 8px; color:#3366cc; font-weight:500; text-decoration:none; }
+.blog-nav a:hover, .post-nav a:hover { text-decoration:underline; }
+.post-prev-next { display:flex; justify-content:space-between; flex-wrap:wrap; margin-top:12px; }
+.prev-post, .next-post { color:#0066cc; font-size:0.95rem; }
+
+/* フッター */
+footer { text-align:center; padding:24px 16px; color:#777; font-size:0.9rem; margin-top:48px; border-top:1px solid #eee; }
+
+/* レスポンシブ調整 */
+@media (max-width:480px) {
+  .page-container { padding:20px 14px; }
+  .blog-card { padding:16px; }
+  header h1 { font-size:1.15rem; }
+  #post-content { padding:16px; margin: 0 10px 20px; }
+}
+
+/* ========== 統一デザイン：末尾追記用（ここまで） ========== */
+
 
 
 
