@@ -13,7 +13,10 @@
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
 
-  gtag('config', 'G-SMV0CM27TY');
+gtag('config', 'G-SMV0CM27TY', {
+  'page_path': '/blog/' + new URLSearchParams(location.search).get('slug'),
+  'page_title': document.title || 'ブログ記事'
+});
 </script>
 </head>
 <body>
