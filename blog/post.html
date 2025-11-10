@@ -36,54 +36,60 @@ gtag('config', 'G-SMV0CM27TY', {
   </nav>
   <!-- ▲ ブログナビゲーション -->
 
-  <script>
-    const params = new URLSearchParams(location.search);
-    const slug = params.get("slug");
+ <script>
+  const params = new URLSearchParams(location.search);
+  const slug = params.get("slug");
 
-    if (!slug) {
-      document.getElementById("post-content").textContent = "記事が見つかりません。";
-    } else {
-      fetch(`posts/${slug}.md`)
-        .then(res => {
-          if (!res.ok) throw new Error("記事が見つかりません");
-          return res.text();
-        })
-        .then(md => {
-          document.getElementById("post-content").innerHTML = marked.parse(md);
-          const match = md.match(/^# (.+)/);
-          if (match) document.getElementById("post-title").textContent = match[1];
-        })
-        .catch(err => {
-          document.getElementById("post-content").textContent = err.message;
-        });
-    }
+  if (!slug) {
+    document.getElementById("post-content").textContent = "記事が見つかりません。";
+  } else {
+    fetch(`posts/${slug}.md`)
+      .then(res => {
+        if (!res.ok) throw new Error("記事が見つかりません");
+        return res.text();
+      })
+      .then(md => {
+        // ▼ YAMLフロントマターを除去
+        const cleanedMd = md.replace(/^---[\s\S]*?---/, "").trim();
 
-    // ▼ 前後記事リンク生成 ---------------------
-    fetch("posts.json")
-      .then(res => res.json())
-      .then(posts => {
-        const index = posts.findIndex(p => p.slug === slug);
-        const prev = posts[index - 1];
-        const next = posts[index + 1];
+        // 本文をHTML化
+        document.getElementById("post-content").innerHTML = marked.parse(cleanedMd);
 
-        const prevLink = document.getElementById("prev-post");
-        const nextLink = document.getElementById("next-post");
-
-        if (prev) {
-          prevLink.href = `post.html?slug=${prev.slug}`;
-          prevLink.textContent = `← ${prev.title}`;
-        } else {
-          prevLink.style.display = "none";
-        }
-
-        if (next) {
-          nextLink.href = `post.html?slug=${next.slug}`;
-          nextLink.textContent = `${next.title} →`;
-        } else {
-          nextLink.style.display = "none";
-        }
+        // Markdownの先頭見出しをタイトルに
+        const match = cleanedMd.match(/^# (.+)/);
+        if (match) document.getElementById("post-title").textContent = match[1];
+      })
+      .catch(err => {
+        document.getElementById("post-content").textContent = err.message;
       });
-    // ▲ 前後記事リンク生成 ---------------------
-  </script>
+  }
+
+  // ▼ 前後記事リンク生成
+  fetch("posts.json")
+    .then(res => res.json())
+    .then(posts => {
+      const index = posts.findIndex(p => p.slug === slug);
+      const prev = posts[index - 1];
+      const next = posts[index + 1];
+
+      const prevLink = document.getElementById("prev-post");
+      const nextLink = document.getElementById("next-post");
+
+      if (prev) {
+        prevLink.href = `post.html?slug=${prev.slug}`;
+        prevLink.textContent = `← ${prev.title}`;
+      } else {
+        prevLink.style.display = "none";
+      }
+
+      if (next) {
+        nextLink.href = `post.html?slug=${next.slug}`;
+        nextLink.textContent = `${next.title} →`;
+      } else {
+        nextLink.style.display = "none";
+      }
+    });
+</script>
+
 </body>
 </html>
