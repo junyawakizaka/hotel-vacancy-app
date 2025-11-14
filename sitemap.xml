@@ -6,4 +6,13 @@
     <changefreq>hourly</changefreq>
     <priority>1.0</priority>
   </url>
+  <url>
+    https://victorious-river-0bea9e200.1.azurestaticapps.net/blog/
+  </url>
+  <url>
+    https://victorious-river-0bea9e200.1.azurestaticapps.net/blog/post.html?slug=20251110_1
+  </url>
+  <url>
+    https://victorious-river-0bea9e200.1.azurestaticapps.net/blog/post.html?slug=20251114_1
+  </url>
 </urlset>
