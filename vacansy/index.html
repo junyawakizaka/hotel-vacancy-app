@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>空室が見つかりました！ | ディズニーホテル予約</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .container {
+      max-width: 500px;
+      width: 100%;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+    
+    .header {
+      background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+      color: white;
+      padding: 30px 20px;
+      text-align: center;
+    }
+    
+    .header h1 {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+    
+    .header p {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+    
+    .content {
+      padding: 30px 20px;
+    }
+    
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 15px 0;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .info-row:last-child {
+      border-bottom: none;
+    }
+    
+    .info-label {
+      color: #999;
+      font-size: 14px;
+    }
+    
+    .info-value {
+      font-weight: bold;
+      font-size: 16px;
+      color: #333;
+    }
+    
+    .hotel-name {
+      font-size: 20px;
+      font-weight: bold;
+      color: #667eea;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    
+    .cta-button {
+      display: block;
+      width: 100%;
+      padding: 18px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      text-decoration: none;
+      text-align: center;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: bold;
+      margin-top: 30px;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+    
+    .cta-button:active {
+      transform: scale(0.98);
+    }
+    
+    .notice {
+      background: #FFF3CD;
+      border-left: 4px solid #FFC107;
+      padding: 15px;
+      margin-top: 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      color: #856404;
+    }
+    
+    .tips {
+      background: #E3F2FD;
+      padding: 20px;
+      margin-top: 20px;
+      border-radius: 8px;
+    }
+    
+    .tips h3 {
+      font-size: 16px;
+      color: #1976D2;
+      margin-bottom: 10px;
+    }
+    
+    .tips ul {
+      margin-left: 20px;
+      color: #555;
+      font-size: 14px;
+      line-height: 1.8;
+    }
+    
+    .disclaimer {
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      padding: 15px;
+      margin-top: 20px;
+      border-radius: 8px;
+      font-size: 11px;
+      color: #6c757d;
+      line-height: 1.6;
+    }
+    
+    .disclaimer h4 {
+      font-size: 13px;
+      color: #495057;
+      margin-bottom: 8px;
+    }
+    
+    .disclaimer p {
+      margin: 0;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #999;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🎉 空室が見つかりました！</h1>
+      <p>お急ぎください。人気日程はすぐに埋まります</p>
+    </div>
+    
+    <div class="content" id="content">
+      <div class="loading">読み込み中...</div>
+    </div>
+  </div>
+
+  <script>
+    // LINE内ブラウザ検知
+    function isLINEBrowser() {
+      const ua = navigator.userAgent.toLowerCase();
+      return ua.includes('line/');
+    }
+
+    // 外部ブラウザで開くよう促すモーダルを表示
+    function showBrowserSwitchModal() {
+      const modal = document.createElement('div');
+      modal.id = 'browser-modal';
+      modal.innerHTML = `
+        <div style="
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0,0,0,0.8);
+          z-index: 9999;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 20px;
+        ">
+          <div style="
+            background: white;
+            border-radius: 16px;
+            padding: 30px 20px;
+            max-width: 350px;
+            text-align: center;
+          ">
+            <div style="font-size: 48px; margin-bottom: 16px;">🌐</div>
+            <h3 style="font-size: 18px; margin-bottom: 12px; color: #333;">
+              外部ブラウザで開くことをおすすめします
+            </h3>
+            <p style="font-size: 14px; color: #666; line-height: 1.6; margin-bottom: 20px;">
+              予約をスムーズに行うため、SafariやChromeなどの
+              ブラウザで開き直してください。
+            </p>
+            <div style="margin-bottom: 16px;">
+              <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 100'%3E%3Ctext x='10' y='40' font-size='14' fill='%23666'%3E1. 右上の「︙」メニューをタップ%3C/text%3E%3Ctext x='10' y='70' font-size='14' fill='%23666'%3E2. 「他のアプリで開く」を選択%3C/text%3E%3C/svg%3E" 
+                   style="width: 100%; height: auto;" alt="手順">
+            </div>
+            <button onclick="document.getElementById('browser-modal').remove()" style="
+              width: 100%;
+              padding: 14px;
+              background: #667eea;
+              color: white;
+              border: none;
+              border-radius: 8px;
+              font-size: 16px;
+              font-weight: bold;
+              cursor: pointer;
+            ">
+              このまま続ける
+            </button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+
+    // URLパラメータ取得
+    const params = new URLSearchParams(window.location.search);
+    const hotelId = params.get('hotel');
+    const hotelName = params.get('name');  // ← 新規追加
+    const checkinDate = params.get('date');
+    const adults = params.get('adults') || '2';
+    const children = params.get('children') || '0';
+
+    if (!hotelId || !checkinDate) {
+      document.getElementById('content').innerHTML = 
+        '<p style="text-align:center;color:#999;">パラメータが不正です</p>';
+    } else {
+      // LINE内ブラウザチェック
+      if (isLINEBrowser()) {
+        showBrowserSwitchModal();
+      }
+
+      // ホテル名（パラメータから取得、なければフォールバック）
+      const displayHotelName = hotelName || `ホテルID: ${hotelId}`;
+      
+      // チェックアウト日（翌日）
+      const checkoutDate = (() => {
+        const d = new Date(checkinDate);
+        d.setDate(d.getDate() + 1);
+        return d.toISOString().slice(0, 10);
+      })();
+
+      // アフィリエイトリンク生成
+      const affiliateUrl = buildAffiliateUrl(hotelId, checkinDate, checkoutDate, adults);
+
+      // 日付フォーマット
+      const formatDate = (dateStr) => {
+        const d = new Date(dateStr);
+        return `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日`;
+      };
+
+      // 曜日取得
+      const dayOfWeek = ['日', '月', '火', '水', '木', '金', '土'];
+      const dow = dayOfWeek[new Date(checkinDate).getDay()];
+
+      // ページ生成
+      document.getElementById('content').innerHTML = `
+        <div class="hotel-name">${displayHotelName}</div>
+        
+        <div class="info-row">
+          <span class="info-label">チェックイン</span>
+          <span class="info-value">${formatDate(checkinDate)}（${dow}）</span>
+        </div>
+        
+        <div class="info-row">
+          <span class="info-label">チェックアウト</span>
+          <span class="info-value">${formatDate(checkoutDate)}</span>
+        </div>
+        
+        <div class="info-row">
+          <span class="info-label">宿泊人数</span>
+          <span class="info-value">大人 ${adults}名 / 子供 ${children}名</span>
+        </div>
+
+        <a href="${affiliateUrl}" class="cta-button" id="bookingButton">
+          今すぐ予約する
+        </a>
+
+        <div class="notice">
+          ⚠️ <strong>重要なお知らせ</strong><br>
+          空室は先着順です。このページを開いている間に満室になる可能性があります。<br>
+          お早めの予約をおすすめします。
+        </div>
+
+        <div class="tips">
+          <h3>📝 予約のコツ</h3>
+          <ul>
+            <li>複数のプランを比較してみましょう</li>
+            <li>楽天ポイントを活用するとお得です</li>
+            <li>キャンセルポリシーを確認しましょう</li>
+            <li>朝食付き・素泊まりを選べます</li>
+          </ul>
+        </div>
+
+        <div class="disclaimer">
+          <h4>免責事項</h4>
+          <p>
+            • 当サービスは空室情報を通知するものであり、予約を保証するものではありません。<br>
+            • 通知時点では空室がありましたが、予約ページを開いた時点で既に満室になっている場合があります。<br>
+            • 予約の成否や宿泊に関するトラブルについては、当サービスは一切の責任を負いかねます。<br>
+            • 予約内容の確認や変更・キャンセルは、楽天トラベルの規約に従ってください。
+          </p>
+        </div>
+      `;
+
+      // クリック計測（オプション）
+      document.getElementById('bookingButton').addEventListener('click', () => {
+        // Google Analyticsなどでトラッキング可能
+        console.log('予約ボタンクリック:', displayHotelName, checkinDate);
+      });
+    }
+
+    // アフィリエイトURL生成
+    function buildAffiliateUrl(hotelId, checkinDateStr, checkoutDateStr, adults) {
+      const [y1, m1, d1] = checkinDateStr.split("-").map(s => parseInt(s, 10));
+      const [y2, m2, d2] = checkoutDateStr.split("-").map(s => parseInt(s, 10));
+
+      // 楽天アフィリエイトID（環境変数から取得する場合は別途APIエンドポイント経由）
+      const AFFILIATE_ID = 'YOUR_AFFILIATE_ID'; // ここに実際のIDを設定
+
+      const inner =
+        `https://hotel.travel.rakuten.co.jp/hotelinfo/plan/${hotelId}` +
+        `?f_flg=PLAN&f_teikei=&f_hizuke=&f_hak=&f_dai=japan&f_chu=tiba&f_shou=keiyo&f_sai=&f_tel=&f_target_flg=` +
+        `&f_tscm_flg=&f_p_no=&f_custom_code=&f_search_type=&f_camp_id=&f_static=1&f_rm_equip=` +
+        `&f_hi1=${d1}&f_tuki1=${m1}&f_nen1=${y1}` +
+        `&f_hi2=${d2}&f_tuki2=${m2}&f_nen2=${y2}` +
+        `&f_heya_su=1&f_otona_su=${adults}` +
+        `&f_s1=0&f_s2=0&f_y1=0&f_y2=0&f_y3=0&f_y4=0&f_kin2=0&f_kin=`;
+
+      return `https://hb.afl.rakuten.co.jp/hgc/${AFFILIATE_ID}/?pc=` + encodeURIComponent(inner);
+    }
+  </script>
+</body>
+</html>
