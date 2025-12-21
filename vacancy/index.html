@@ -3,173 +3,330 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>空室が見つかりました！ | ディズニーホテル予約</title>
+  <title>空室が見つかりました！ | ディズニーホテル空室カレンダー</title>
+  <meta name="description" content="ディズニーホテルの空室が見つかりました。お早めのご予約をおすすめします。">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+    :root{
+      --bg:#fafafa; --card:#fff; --txt:#222; --muted:#687076;
+      --ok:#16a34a; --ng:#d1d5db; --sat:#e8f2ff; --sun:#ffecef;
+      --accent:#2563eb; --sticky:#fff;
+      --radius:14px;
     }
-    
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--txt);font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Hiragino Kaku Gothic ProN","Yu Gothic UI","Noto Sans JP",sans-serif;line-height:1.45}
+    h1,h2,h3,p{margin:0}
+
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       min-height: 100vh;
-      padding: 20px;
       display: flex;
-      align-items: center;
-      justify-content: center;
+      flex-direction: column;
     }
-    
+
+    .page-header {
+      padding: 20px 16px;
+      text-align: center;
+      background: var(--card);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+
+    .page-header h1 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--txt);
+    }
+
+    .page-header .sub {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 6px;
+    }
+
     .container {
-      max-width: 500px;
+      flex: 1;
+      max-width: 720px;
       width: 100%;
-      background: white;
-      border-radius: 20px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-      overflow: hidden;
+      margin: 0 auto;
+      padding: 16px 12px 40px;
     }
-    
-    .header {
+
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      margin-bottom: 12px;
+      padding: 18px 16px;
+      box-shadow: 0 2px 10px rgba(0,0,0,.04);
+    }
+
+    .alert-card {
       background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
       color: white;
-      padding: 30px 20px;
       text-align: center;
+      padding: 24px 16px;
     }
-    
-    .header h1 {
-      font-size: 24px;
-      margin-bottom: 10px;
+
+    .alert-card .icon {
+      font-size: 48px;
+      margin-bottom: 8px;
     }
-    
-    .header p {
-      font-size: 14px;
-      opacity: 0.9;
+
+    .alert-card h2 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 6px;
     }
-    
-    .content {
-      padding: 30px 20px;
+
+    .alert-card p {
+      font-size: 13px;
+      opacity: 0.95;
     }
-    
+
+    .hotel-name {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #e5e7eb;
+    }
+
+    .info-grid {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
     .info-row {
       display: flex;
       justify-content: space-between;
-      padding: 15px 0;
-      border-bottom: 1px solid #eee;
+      padding: 10px 0;
+      border-bottom: 1px solid #f0f2f5;
     }
-    
+
     .info-row:last-child {
       border-bottom: none;
     }
-    
+
     .info-label {
-      color: #999;
-      font-size: 14px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
     }
-    
+
     .info-value {
-      font-weight: bold;
-      font-size: 16px;
-      color: #333;
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--txt);
+      text-align: right;
     }
-    
-    .hotel-name {
-      font-size: 20px;
-      font-weight: bold;
-      color: #667eea;
-      margin-bottom: 20px;
-      text-align: center;
-    }
-    
+
     .cta-button {
       display: block;
       width: 100%;
-      padding: 18px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 16px;
+      background: var(--accent);
       color: white;
       text-decoration: none;
       text-align: center;
       border-radius: 12px;
-      font-size: 18px;
-      font-weight: bold;
-      margin-top: 30px;
-      transition: transform 0.2s, box-shadow 0.2s;
-      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+      font-size: 16px;
+      font-weight: 700;
+      transition: all 0.15s ease;
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
     }
-    
+
     .cta-button:active {
-      transform: scale(0.98);
+      transform: translateY(1px);
     }
-    
+
     .notice {
       background: #FFF3CD;
       border-left: 4px solid #FFC107;
-      padding: 15px;
-      margin-top: 20px;
+      padding: 14px;
       border-radius: 8px;
       font-size: 13px;
       color: #856404;
+      line-height: 1.6;
     }
-    
+
+    .notice strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
     .tips {
-      background: #E3F2FD;
-      padding: 20px;
-      margin-top: 20px;
-      border-radius: 8px;
+      background: #EEF2FF;
+      padding: 16px;
+      border-radius: 12px;
     }
-    
+
     .tips h3 {
-      font-size: 16px;
-      color: #1976D2;
-      margin-bottom: 10px;
-    }
-    
-    .tips ul {
-      margin-left: 20px;
-      color: #555;
       font-size: 14px;
+      color: #3730a3;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    .tips ul {
+      margin: 0;
+      padding-left: 20px;
+      font-size: 13px;
+      color: #374151;
       line-height: 1.8;
     }
-    
+
+    .tips li {
+      margin-bottom: 6px;
+    }
+
     .disclaimer {
       background: #f8f9fa;
       border: 1px solid #dee2e6;
-      padding: 15px;
-      margin-top: 20px;
+      padding: 14px;
       border-radius: 8px;
       font-size: 11px;
       color: #6c757d;
       line-height: 1.6;
     }
-    
+
     .disclaimer h4 {
-      font-size: 13px;
+      font-size: 12px;
       color: #495057;
       margin-bottom: 8px;
+      font-weight: 700;
     }
-    
+
     .disclaimer p {
       margin: 0;
     }
-    
+
     .loading {
       text-align: center;
       padding: 40px;
-      color: #999;
+      color: var(--muted);
+    }
+
+    .app-footer {
+      padding: 20px 16px 34px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+      background: var(--card);
+      border-top: 1px solid #f0f2f5;
+      margin-top: auto;
+    }
+
+    .app-footer a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .app-footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* LINE内ブラウザモーダル */
+    #browser-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.8);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    #browser-modal .modal-content {
+      background: white;
+      border-radius: 16px;
+      padding: 30px 20px;
+      max-width: 350px;
+      text-align: center;
+    }
+
+    #browser-modal .modal-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+
+    #browser-modal h3 {
+      font-size: 18px;
+      margin-bottom: 12px;
+      color: #333;
+    }
+
+    #browser-modal p {
+      font-size: 14px;
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    #browser-modal .instructions {
+      background: #f9fafb;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      color: #374151;
+      margin-bottom: 16px;
+      line-height: 1.6;
+    }
+
+    #browser-modal button {
+      width: 100%;
+      padding: 14px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    @media (max-width: 360px) {
+      .container {
+        padding: 14px 10px 30px;
+      }
+      .card {
+        padding: 14px 12px;
+      }
     }
   </style>
 </head>
 <body>
+  <header class="page-header">
+    <h1>ディズニーホテル 空室カレンダー</h1>
+    <p class="sub">空室が見つかりました！お早めのご予約をおすすめします</p>
+  </header>
+
   <div class="container">
-    <div class="header">
-      <h1>🎉 空室が見つかりました！</h1>
-      <p>お急ぎください。人気日程はすぐに埋まります</p>
+    <div class="card alert-card">
+      <div class="icon">🎉</div>
+      <h2>空室が見つかりました！</h2>
+      <p>人気日程のため早期満室の可能性があります</p>
     </div>
-    
-    <div class="content" id="content">
+
+    <div class="card" id="content">
       <div class="loading">読み込み中...</div>
     </div>
   </div>
+
+  <footer class="app-footer">
+    <p>
+      <a href="/">← 空室カレンダーに戻る</a>
+    </p>
+    <small>
+      © 2025 
+      <a href="https://x.com/brpwh54023" target="_blank" rel="noopener">
+        ディズニーホテル キャンセル・空室通知 bot
+      </a>
+    </small>
+  </footer>
 
   <script>
     // LINE内ブラウザ検知
@@ -183,52 +340,17 @@
       const modal = document.createElement('div');
       modal.id = 'browser-modal';
       modal.innerHTML = `
-        <div style="
-          position: fixed;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background: rgba(0,0,0,0.8);
-          z-index: 9999;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 20px;
-        ">
-          <div style="
-            background: white;
-            border-radius: 16px;
-            padding: 30px 20px;
-            max-width: 350px;
-            text-align: center;
-          ">
-            <div style="font-size: 48px; margin-bottom: 16px;">🌐</div>
-            <h3 style="font-size: 18px; margin-bottom: 12px; color: #333;">
-              外部ブラウザで開くことをおすすめします
-            </h3>
-            <p style="font-size: 14px; color: #666; line-height: 1.6; margin-bottom: 20px;">
-              予約をスムーズに行うため、SafariやChromeなどの
-              ブラウザで開き直してください。
-            </p>
-            <div style="margin-bottom: 16px;">
-              <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 100'%3E%3Ctext x='10' y='40' font-size='14' fill='%23666'%3E1. 右上の「︙」メニューをタップ%3C/text%3E%3Ctext x='10' y='70' font-size='14' fill='%23666'%3E2. 「他のアプリで開く」を選択%3C/text%3E%3C/svg%3E" 
-                   style="width: 100%; height: auto;" alt="手順">
-            </div>
-            <button onclick="document.getElementById('browser-modal').remove()" style="
-              width: 100%;
-              padding: 14px;
-              background: #667eea;
-              color: white;
-              border: none;
-              border-radius: 8px;
-              font-size: 16px;
-              font-weight: bold;
-              cursor: pointer;
-            ">
-              このまま続ける
-            </button>
+        <div class="modal-content">
+          <div class="modal-icon">🌐</div>
+          <h3>外部ブラウザで開くことをおすすめします</h3>
+          <p>予約をスムーズに行うため、SafariやChromeなどのブラウザで開き直してください。</p>
+          <div class="instructions">
+            1. 右上の「︙」メニューをタップ<br>
+            2. 「他のアプリで開く」を選択
           </div>
+          <button onclick="document.getElementById('browser-modal').remove()">
+            このまま続ける
+          </button>
         </div>
       `;
       document.body.appendChild(modal);
@@ -237,7 +359,7 @@
     // URLパラメータ取得
     const params = new URLSearchParams(window.location.search);
     const hotelId = params.get('hotel');
-    const hotelName = params.get('name');  // ← 新規追加
+    const hotelName = params.get('name');
     const checkinDate = params.get('date');
     const adults = params.get('adults') || '2';
     const children = params.get('children') || '0';
@@ -278,32 +400,38 @@
       document.getElementById('content').innerHTML = `
         <div class="hotel-name">${displayHotelName}</div>
         
-        <div class="info-row">
-          <span class="info-label">チェックイン</span>
-          <span class="info-value">${formatDate(checkinDate)}（${dow}）</span>
-        </div>
-        
-        <div class="info-row">
-          <span class="info-label">チェックアウト</span>
-          <span class="info-value">${formatDate(checkoutDate)}</span>
-        </div>
-        
-        <div class="info-row">
-          <span class="info-label">宿泊人数</span>
-          <span class="info-value">大人 ${adults}名 / 子供 ${children}名</span>
+        <div class="info-grid">
+          <div class="info-row">
+            <span class="info-label">チェックイン</span>
+            <span class="info-value">${formatDate(checkinDate)}（${dow}）</span>
+          </div>
+          
+          <div class="info-row">
+            <span class="info-label">チェックアウト</span>
+            <span class="info-value">${formatDate(checkoutDate)}</span>
+          </div>
+          
+          <div class="info-row">
+            <span class="info-label">宿泊人数</span>
+            <span class="info-value">大人 ${adults}名 / 子供 ${children}名</span>
+          </div>
         </div>
 
         <a href="${affiliateUrl}" class="cta-button" id="bookingButton">
           今すぐ予約する
         </a>
+      `;
 
-        <div class="notice">
-          ⚠️ <strong>重要なお知らせ</strong><br>
+      // 追加情報カード
+      const additionalInfo = document.createElement('div');
+      additionalInfo.innerHTML = `
+        <div class="card notice">
+          <strong>⚠️ 重要なお知らせ</strong>
           空室は先着順です。このページを開いている間に満室になる可能性があります。<br>
           お早めの予約をおすすめします。
         </div>
 
-        <div class="tips">
+        <div class="card tips">
           <h3>📝 予約のコツ</h3>
           <ul>
             <li>複数のプランを比較してみましょう</li>
@@ -313,7 +441,7 @@
           </ul>
         </div>
 
-        <div class="disclaimer">
+        <div class="card disclaimer">
           <h4>免責事項</h4>
           <p>
             • 当サービスは空室情報を通知するものであり、予約を保証するものではありません。<br>
@@ -323,10 +451,11 @@
           </p>
         </div>
       `;
+      
+      document.querySelector('.container').appendChild(additionalInfo);
 
       // クリック計測（オプション）
       document.getElementById('bookingButton').addEventListener('click', () => {
-        // Google Analyticsなどでトラッキング可能
         console.log('予約ボタンクリック:', displayHotelName, checkinDate);
       });
     }
@@ -336,8 +465,8 @@
       const [y1, m1, d1] = checkinDateStr.split("-").map(s => parseInt(s, 10));
       const [y2, m2, d2] = checkoutDateStr.split("-").map(s => parseInt(s, 10));
 
-      // 楽天アフィリエイトID（環境変数から取得する場合は別途APIエンドポイント経由）
-      const AFFILIATE_ID = 'YOUR_AFFILIATE_ID'; // ここに実際のIDを設定
+      // 楽天アフィリエイトID（実際のIDに置き換え）
+      const AFFILIATE_ID = '4bfb9c3a.dba8952b.4bce44bb.c84df6cc';
 
       const inner =
         `https://hotel.travel.rakuten.co.jp/hotelinfo/plan/${hotelId}` +
