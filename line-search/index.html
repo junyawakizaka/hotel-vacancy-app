@@ -4,15 +4,15 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <link rel="stylesheet" href="../style.css" />
-  <title>LINE空室検索サービス｜ディズニーホテルの空室を自動通知</title>
+  <title>LINE空室検索サービス｜ ディズニーホテルの空室を自動通知</title>
 
-  <meta name="description" content="LINEでディズニーホテルの空室を自動通知。希望日・ホテルを指定するだけで、キャンセル発生を即座にお知らせします。" />
+  <meta name="description" content="LINEでディズニーホテルの楽天トラベルの空室を自動通知。希望日・ホテルを指定するだけで、キャンセル発生をお知らせします。" />
   
   <meta name="keywords" content="LINE,ディズニーホテル,空室通知,自動検索,キャンセル拾い,楽天トラベル" />
 
   <!-- OGP -->
   <meta property="og:title" content="LINE空室検索サービス｜ディズニーホテルの空室を自動通知" />
-  <meta property="og:description" content="LINEでディズニーホテルの空室を自動通知。希望日・ホテルを指定するだけで、キャンセル発生を即座にお知らせします。" />
+  <meta property="og:description" content="LINEでディズニーホテルの空室を自動通知。希望日・ホテルを指定するだけで、キャンセル発生をお知らせします。" />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://victorious-river-0bea9e200.1.azurestaticapps.net/line-search/" />
   
@@ -28,10 +28,13 @@
 <body>
 
 <header class="app-header">
-  <h1>LINE空室検索サービス</h1>
+  <h1>LINE空室検索サービス <span class="beta-badge">β版</span></h1>
   <p class="sub">
-    ディズニーホテルの空室を自動でチェックし、希望日にキャンセルが出たら即座にLINEで通知。
+    楽天トラベルの空室を自動でチェックし、希望日にキャンセルが出たらLINEで通知。
     24時間365日、あなたに代わって空室を監視します。
+  </p>
+  <p class="sub beta-notice">
+    ※ 現在ベータ版（試運転中）です。予告なく機能変更・停止する場合があります。
   </p>
 </header>
 
@@ -44,20 +47,20 @@
     <div class="feature-list">
       <div class="feature-item">
         <div class="feature-icon">🔔</div>
-        <h3>リアルタイム自動通知</h3>
-        <p>希望日・ホテルを登録するだけで、キャンセルが発生したら即座にLINEでお知らせ。サイトをチェックし続ける手間が不要です。</p>
+        <h3>自動通知</h3>
+        <p>希望日・ホテルを登録するだけで、楽天トラベルでキャンセルが発生したらLINEでお知らせ。サイトをチェックし続ける手間が不要です。</p>
       </div>
 
       <div class="feature-item">
         <div class="feature-icon">🎯</div>
         <h3>ホテルIDで細かく指定</h3>
-        <p>泊まりたいホテルをIDで指定可能。ミラコスタやファンタジースプリングスホテルなど、お好みのホテルだけを監視できます。</p>
+        <p>泊まりたいホテルをIDで指定可能。ミラコスタやファンタジースプリングスホテルなど、お好みのホテルだけを監視できます。もちろんディズニーホテル以外も指定可能！</p>
       </div>
 
       <div class="feature-item">
         <div class="feature-icon">⚡</div>
         <h3>24時間365日監視</h3>
-        <p>深夜や早朝のキャンセルも見逃しません。常に最新の空室状況をチェックし、チャンスを逃しません。</p>
+        <p>深夜や早朝のキャンセルも見逃しません。常に最新の空室状況を定期的にチェックし、チャンスを逃しません。</p>
       </div>
     </div>
   </section>
@@ -76,7 +79,7 @@
       <div class="step">
         <div class="step-number">STEP 2</div>
         <h3>希望日とホテルを登録</h3>
-        <p>チャットで希望のチェックイン日とホテルID（例：74733 = ミラコスタ）を送信。複数のホテル・日付も登録可能です。</p>
+        <p>チャットで希望のチェックイン日とホテルID（例：74733 = ミラコスタ）を送信。</p>
       </div>
 
       <div class="step">
@@ -112,14 +115,6 @@
             <td>トイストーリーホテル</td>
             <td><code>183493</code></td>
           </tr>
-          <tr>
-            <td>アンバサダーホテル</td>
-            <td><code>72737</code></td>
-          </tr>
-          <tr>
-            <td>セレブレーションホテル</td>
-            <td><code>151431</code></td>
-          </tr>
         </tbody>
       </table>
     </div>
@@ -139,6 +134,29 @@
     </a>
     
     <p class="cta-note">※ LINEアプリがインストールされている必要があります</p>
+  </section>
+
+  <!-- 免責事項 -->
+  <section class="card disclaimer-section">
+    <h2>ご利用にあたっての注意事項</h2>
+    
+    <div class="disclaimer-content">
+      <h3>ベータ版について</h3>
+      <p>本サービスは現在ベータ版（試運転中）として提供しています。予告なく機能の変更・追加・削除、またはサービスの一時停止・終了を行う場合がありますので、あらかじめご了承ください。</p>
+      
+      <h3>免責事項</h3>
+      <ul>
+        <li>本サービスは楽天トラベルの公開情報を基に空室状況を通知するものであり、予約を保証するものではありません。</li>
+        <li>通知のタイミングや精度については、システムの都合により遅延や誤差が生じる場合があります。</li>
+        <li>通知を受け取った時点で既に満室となっている場合がありますが、当サービスは一切の責任を負いかねます。</li>
+        <li>本サービスの利用により生じたいかなる損害についても、当サービスは責任を負いません。</li>
+        <li>通知が届かない、または誤った通知が届く可能性があります。重要な予約の際は、必ず楽天トラベル公式サイトで直接ご確認ください。</li>
+        <li>本サービスは非公式サービスであり、株式会社オリエンタルランド、楽天グループ株式会社とは一切関係ありません。</li>
+      </ul>
+      
+      <h3>推奨事項</h3>
+      <p>本サービスはあくまで補助ツールとしてご利用ください。確実な予約を希望される場合は、楽天トラベルや公式サイトを定期的にご自身でもご確認いただくことをおすすめします。</p>
+    </div>
   </section>
 
   <!-- ナビゲーション -->
