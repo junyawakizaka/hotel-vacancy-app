@@ -1,1 +1,169 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ディズニーAI投稿管理</title>
 
+    <style>
+        body {
+            font-family: sans-serif;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+            background: #f7f7f7;
+            color: #333;
+        }
+
+        h1 {
+            margin-bottom: 30px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .label {
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        .post-text {
+            white-space: pre-wrap;
+            background: #f1f1f1;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 5px;
+        }
+
+        .loading {
+            margin-top: 20px;
+        }
+
+        .error {
+            color: #c00;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>ディズニーAI投稿管理</h1>
+
+    <button id="loadButton">
+        投稿候補を取得
+    </button>
+
+    <div id="message"></div>
+
+    <div id="candidate"></div>
+
+    <script>
+        // getPostCandidates のURL
+        const API_URL =
+            "https://disney-vacancy-func-001-f2dcc2fpg7drfebj.japanwest-01.azurewebsites.net/api/getPostCandidates?code=RGZdXNQeT1C6YJzygPlhpkcyLUhgmSesuBaMmxYFGQXLAzFuDnNJRg==";
+
+        const loadButton = document.getElementById("loadButton");
+        const message = document.getElementById("message");
+        const candidate = document.getElementById("candidate");
+
+        loadButton.addEventListener("click", async () => {
+
+            message.innerHTML = '<div class="loading">取得中...</div>';
+            candidate.innerHTML = "";
+
+            try {
+
+                const response = await fetch(API_URL);
+
+                if (!response.ok) {
+                    throw new Error(
+                        `HTTPエラー: ${response.status}`
+                    );
+                }
+
+                const data = await response.json();
+
+                if (!data.candidates || data.candidates.length === 0) {
+                    message.innerHTML =
+                        "<p>投稿候補はありません。</p>";
+                    return;
+                }
+
+                const item = data.candidates[0];
+
+                message.innerHTML =
+                    `<p>投稿候補を取得しました。</p>`;
+
+                candidate.innerHTML = `
+                    <div class="card">
+
+                        <div class="label">キーワード</div>
+                        <div>${escapeHtml(item.keyword || "")}</div>
+
+                        <div class="label">商品</div>
+                        <div>${escapeHtml(item.productName || "")}</div>
+
+                        <div class="label">価格</div>
+                        <div>${escapeHtml(String(item.productPrice || ""))}円</div>
+
+                        <div class="label">ショップ</div>
+                        <div>${escapeHtml(item.shopName || "")}</div>
+
+                        <div class="label">選定理由</div>
+                        <div>${escapeHtml(item.selectionReason || "")}</div>
+
+                        <div class="label">投稿文</div>
+                        <div class="post-text">
+                            ${escapeHtml(item.postText || "")}
+                        </div>
+
+                        <div class="label">商品URL</div>
+                        <div>
+                            <a href="${escapeHtml(item.productUrl || "")}"
+                               target="_blank"
+                               rel="noopener">
+                               商品ページを開く
+                            </a>
+                        </div>
+
+                    </div>
+                `;
+
+            } catch (error) {
+
+                console.error(error);
+
+                message.innerHTML = `
+                    <div class="error">
+                        投稿候補の取得に失敗しました。<br>
+                        ${escapeHtml(error.message)}
+                    </div>
+                `;
+            }
+        });
+
+        // HTMLに表示する文字を安全に変換
+        function escapeHtml(value) {
+            return value
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    </script>
+
+</body>
+</html>
