@@ -8,18 +8,18 @@
   </url>
   <url>
     <loc>https://victorious-river-0bea9e200.1.azurestaticapps.net/blog/</loc>
-  <lastmod>2025-11-15</lastmod>
+    <lastmod>2026-09-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority></url>
   <url>
     <loc>https://victorious-river-0bea9e200.1.azurestaticapps.net/blog/post.html?slug=20251110_1</loc>
-  <lastmod>2025-11-10</lastmod>
+    <lastmod>2025-11-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://victorious-river-0bea9e200.1.azurestaticapps.net/blog/post.html?slug=20251114_1</loc>
-  <lastmod>2025-11-14</lastmod>
+    <lastmod>2025-11-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -30,11 +30,11 @@
     <priority>0.8</priority>
   </url>
   <url>
-  <loc>https://victorious-river-0bea9e200.1.azurestaticapps.net/blog/post.html?slug=20251218_1</loc>
-  <lastmod>2025-12-18</lastmod>
-  <changefreq>weekly</changefreq>
-  <priority>0.8</priority>
-</url>
+    <loc>https://victorious-river-0bea9e200.1.azurestaticapps.net/blog/post.html?slug=20251218_1</loc>
+    <lastmod>2025-12-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
 
   <url>
     <loc>https://victorious-river-0bea9e200.1.azurestaticapps.net/blog/post.html?slug=20251118_1</loc>
@@ -73,38 +73,45 @@
     <priority>0.8</priority>
   </url>
   <url>
-  <loc>https://victorious-river-0bea9e200.1.azurestaticapps.net/blog/post.html?slug=20260125_1</loc>
-  <lastmod>2026-01-25</lastmod>
-  <changefreq>weekly</changefreq>
-  <priority>0.8</priority>
-</url>
+    <loc>https://victorious-river-0bea9e200.1.azurestaticapps.net/blog/post.html?slug=20260125_1</loc>
+    <lastmod>2026-01-25</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
   
-<url>
-  <loc>https://victorious-river-0bea9e200.1.azurestaticapps.net/blog/post.html?slug=20260211_1</loc>
-  <lastmod>2026-02-11</lastmod>
-  <changefreq>weekly</changefreq>
-  <priority>0.8</priority>
-</url>
+  <url>
+    <loc>https://victorious-river-0bea9e200.1.azurestaticapps.net/blog/post.html?slug=20260211_1</loc>
+    <lastmod>2026-02-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
 
   
-<url>
-  <loc>https://victorious-river-0bea9e200.1.azurestaticapps.net/blog/20260418_1/</loc>
-  <lastmod>2026-04-18</lastmod>
-  <changefreq>monthly</changefreq>
-  <priority>0.8</priority>
-</url>
+  <url>
+    <loc>https://victorious-river-0bea9e200.1.azurestaticapps.net/blog/20260418_1/</loc>
+    <lastmod>2026-04-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
   
-<url>
-  <loc>https://victorious-river-0bea9e200.1.azurestaticapps.net/blog/post.html?slug=20260218_1</loc>
-  <lastmod>2026-02-18</lastmod>
-  <changefreq>weekly</changefreq>
-  <priority>0.8</priority>
-</url>
+  <url>
+    <loc>https://victorious-river-0bea9e200.1.azurestaticapps.net/blog/post.html?slug=20260218_1</loc>
+    <lastmod>2026-02-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
 
   <url>
-  <loc>https://victorious-river-0bea9e200.1.azurestaticapps.net/blog/20260422_1/</loc>
-  <lastmod>2026-04-22</lastmod>
-  <changefreq>monthly</changefreq>
-  <priority>0.8</priority>
-</url>
+    <loc>https://victorious-river-0bea9e200.1.azurestaticapps.net/blog/20260422_1/</loc>
+    <lastmod>2026-04-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://victorious-river-0bea9e200.1.azurestaticapps.net/blog/post.html?slug=20260901_1</loc>
+    <lastmod>2026-09-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
 </urlset>
