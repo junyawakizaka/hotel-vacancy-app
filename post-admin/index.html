@@ -38,8 +38,15 @@
             margin-top: 20px;
         }
 
+        #saveButton {
+            background: #087f23;
+            color: white;
+            margin-top: 10px;
+        }
+
         #postButton:disabled,
-        #loadButton:disabled {
+        #loadButton:disabled,
+        #saveButton:disabled {
             background: #aaa;
             cursor: not-allowed;
         }
@@ -63,6 +70,19 @@
             padding: 15px;
             border-radius: 5px;
             margin-top: 5px;
+        }
+
+        .post-text-edit {
+            width: 100%;
+            box-sizing: border-box;
+            font-family: inherit;
+            font-size: 15px;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            margin-top: 5px;
+            resize: vertical;
+            min-height: 100px;
         }
 
         .loading {
@@ -91,6 +111,11 @@
             background: #eef7ff;
             border-radius: 5px;
         }
+
+        .save-message {
+            margin-top: 8px;
+            font-size: 14px;
+        }
     </style>
 </head>
 
@@ -117,9 +142,14 @@
 
 
         // postToX
-        // ★ここを実際の postToX のURLに変更してください
         const POST_TO_X_API_URL =
             "https://disney-vacancy-func-001-f2dcc2fpg7drfebj.japanwest-01.azurewebsites.net/api/postToX?code=cBayFW59h0cV0BBB4Nu-pduiPkWrj7wglhi9WwgCkDgNAzFu7syghA==";
+
+
+        // updatePostText
+        // ★ここをupdatePostTextデプロイ後に発行されるFunction Keyに変更してください
+        const UPDATE_POST_TEXT_API_URL =
+            "https://disney-vacancy-func-001-f2dcc2fpg7drfebj.japanwest-01.azurewebsites.net/api/updatePostText?code=ここにFunction Keyを設定";
 
 
         // =========================================================
@@ -261,14 +291,27 @@
 
 
                         <div class="label">
-                            投稿文
+                            投稿文（編集可能）
                         </div>
 
-                        <div class="post-text">
-                            ${escapeHtml(
-                                item.postText || ""
-                            )}
-                        </div>
+                        <textarea
+                            id="postTextArea"
+                            class="post-text-edit"
+                        >${escapeHtml(
+                            item.postText || ""
+                        )}</textarea>
+
+                        <button
+                            id="saveButton"
+                            type="button"
+                        >
+                            投稿文を保存
+                        </button>
+
+                        <div
+                            id="saveMessage"
+                            class="save-message"
+                        ></div>
 
 
                         <div class="label">
@@ -324,6 +367,20 @@
                 );
 
 
+                // -------------------------------------------------
+                // 保存ボタン
+                // -------------------------------------------------
+
+                const saveButton =
+                    document.getElementById("saveButton");
+
+
+                saveButton.addEventListener(
+                    "click",
+                    savePostText
+                );
+
+
             } catch (error) {
 
                 console.error(error);
@@ -342,6 +399,164 @@
             }
 
         });
+
+
+        // =========================================================
+        // 投稿文の保存
+        // =========================================================
+
+        async function savePostText() {
+
+            if (!currentCandidate) {
+
+                showSaveMessage(
+                    "投稿候補が選択されていません。",
+                    "error"
+                );
+
+                return;
+            }
+
+
+            const candidateId =
+                currentCandidate.candidateId;
+
+
+            if (!candidateId) {
+
+                showSaveMessage(
+                    "candidateIdが取得できませんでした。",
+                    "error"
+                );
+
+                return;
+            }
+
+
+            const postTextArea =
+                document.getElementById("postTextArea");
+
+            const newPostText =
+                postTextArea.value;
+
+
+            if (newPostText.trim() === "") {
+
+                showSaveMessage(
+                    "投稿文を入力してください。",
+                    "error"
+                );
+
+                return;
+            }
+
+
+            const saveButton =
+                document.getElementById("saveButton");
+
+
+            if (saveButton) {
+                saveButton.disabled = true;
+                saveButton.textContent =
+                    "保存中...";
+            }
+
+
+            showSaveMessage(
+                "保存しています...",
+                ""
+            );
+
+
+            try {
+
+                const response =
+                    await fetch(UPDATE_POST_TEXT_API_URL, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+                        body: JSON.stringify({
+                            candidateId: candidateId,
+                            postText: newPostText
+                        })
+                    });
+
+
+                const data =
+                    await response.json();
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.detail ||
+                        data.error ||
+                        `HTTPエラー: ${response.status}`
+                    );
+
+                }
+
+
+                // -------------------------------------------------
+                // 保存成功：画面上の状態も更新
+                // -------------------------------------------------
+
+                currentCandidate.postText =
+                    newPostText;
+
+
+                showSaveMessage(
+                    "投稿文を保存しました。",
+                    "success"
+                );
+
+
+            } catch (error) {
+
+                console.error(error);
+
+                showSaveMessage(
+                    "保存に失敗しました：" +
+                    error.message,
+                    "error"
+                );
+
+            } finally {
+
+                if (saveButton) {
+                    saveButton.disabled = false;
+                    saveButton.textContent =
+                        "投稿文を保存";
+                }
+
+            }
+
+        }
+
+
+        // =========================================================
+        // 保存結果メッセージ表示
+        // =========================================================
+
+        function showSaveMessage(text, type) {
+
+            const saveMessage =
+                document.getElementById("saveMessage");
+
+            if (!saveMessage) {
+                return;
+            }
+
+            saveMessage.className =
+                "save-message" +
+                (type ? " " + type : "");
+
+            saveMessage.textContent =
+                text;
+
+        }
 
 
         // =========================================================
@@ -379,7 +594,7 @@
 
 
             // -----------------------------------------------------
-            // 投稿前確認
+            // 投稿前確認（保存済みの最新postTextを使用）
             // -----------------------------------------------------
 
             const confirmed =
