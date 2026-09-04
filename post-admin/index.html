@@ -44,9 +44,17 @@
             margin-top: 10px;
         }
 
+        #rejectButton {
+            background: #c0392b;
+            color: white;
+            margin-top: 10px;
+            margin-left: 10px;
+        }
+
         #postButton:disabled,
         #loadButton:disabled,
-        #saveButton:disabled {
+        #saveButton:disabled,
+        #rejectButton:disabled {
             background: #aaa;
             cursor: not-allowed;
         }
@@ -148,8 +156,9 @@
 
         // updatePostText
         // ★ここをupdatePostTextデプロイ後に発行されるFunction Keyに変更してください
+        // postTextの更新・却下（status更新）の両方をこのFunctionで担う
         const UPDATE_POST_TEXT_API_URL =
-            "https://disney-vacancy-func-001-f2dcc2fpg7drfebj.japanwest-01.azurewebsites.net/api/updatePostText?code=RC_FAk7t8fip6czE0AH68qMW6tJUJgEnxNZkyDsxzIVSAzFuYIsh5A==";
+            "https://disney-vacancy-func-001-f2dcc2fpg7drfebj.japanwest-01.azurewebsites.net/api/updatePostText?code=ここにFunction Keyを設定";
 
 
         // =========================================================
@@ -349,6 +358,13 @@
                             Xに投稿する
                         </button>
 
+                        <button
+                            id="rejectButton"
+                            type="button"
+                        >
+                            却下する
+                        </button>
+
                     </div>
                 `;
 
@@ -364,6 +380,20 @@
                 postButton.addEventListener(
                     "click",
                     postCandidate
+                );
+
+
+                // -------------------------------------------------
+                // 却下ボタン
+                // -------------------------------------------------
+
+                const rejectButton =
+                    document.getElementById("rejectButton");
+
+
+                rejectButton.addEventListener(
+                    "click",
+                    rejectCandidate
                 );
 
 
@@ -555,6 +585,153 @@
 
             saveMessage.textContent =
                 text;
+
+        }
+
+
+        // =========================================================
+        // 候補の却下
+        // =========================================================
+
+        async function rejectCandidate() {
+
+            if (!currentCandidate) {
+
+                message.innerHTML = `
+                    <div class="error">
+                        投稿候補が選択されていません。
+                    </div>
+                `;
+
+                return;
+            }
+
+
+            const candidateId =
+                currentCandidate.candidateId;
+
+
+            if (!candidateId) {
+
+                message.innerHTML = `
+                    <div class="error">
+                        candidateIdが取得できませんでした。
+                    </div>
+                `;
+
+                return;
+            }
+
+
+            const confirmed =
+                window.confirm(
+                    "この投稿候補を却下します。\n" +
+                    "却下した商品は今後の候補生成でも除外されます。\n\n" +
+                    "よろしいですか？"
+                );
+
+
+            if (!confirmed) {
+                return;
+            }
+
+
+            const rejectButton =
+                document.getElementById("rejectButton");
+
+            const postButton =
+                document.getElementById("postButton");
+
+            const saveButton =
+                document.getElementById("saveButton");
+
+
+            if (rejectButton) {
+                rejectButton.disabled = true;
+                rejectButton.textContent =
+                    "却下中...";
+            }
+
+
+            message.innerHTML =
+                '<div class="loading">却下しています...</div>';
+
+
+            try {
+
+                const response =
+                    await fetch(UPDATE_POST_TEXT_API_URL, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+                        body: JSON.stringify({
+                            candidateId: candidateId,
+                            status: "Rejected"
+                        })
+                    });
+
+
+                const data =
+                    await response.json();
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.detail ||
+                        data.error ||
+                        `HTTPエラー: ${response.status}`
+                    );
+
+                }
+
+
+                message.innerHTML = `
+                    <div class="success">
+                        投稿候補を却下しました。
+                        「投稿候補を取得」から次の候補を確認してください。
+                    </div>
+                `;
+
+
+                currentCandidate.status = "Rejected";
+
+
+                if (postButton) {
+                    postButton.disabled = true;
+                }
+
+                if (saveButton) {
+                    saveButton.disabled = true;
+                }
+
+                if (rejectButton) {
+                    rejectButton.disabled = true;
+                    rejectButton.textContent =
+                        "却下済み";
+                }
+
+
+            } catch (error) {
+
+                console.error(error);
+
+                message.innerHTML = `
+                    <div class="error">
+                        却下に失敗しました。<br>
+                        ${escapeHtml(error.message)}
+                    </div>
+                `;
+
+                if (rejectButton) {
+                    rejectButton.disabled = false;
+                    rejectButton.textContent =
+                        "却下する";
+                }
+
+            }
 
         }
 
