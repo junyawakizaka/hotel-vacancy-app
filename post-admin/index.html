@@ -32,6 +32,17 @@
             color: white;
         }
 
+        #generateButton {
+            background: #6f42c1;
+            color: white;
+            margin-left: 10px;
+        }
+
+        #generateButton:disabled {
+            background: #aaa;
+            cursor: not-allowed;
+        }
+
         #postButton {
             background: #1d9bf0;
             color: white;
@@ -135,6 +146,12 @@
         投稿候補を取得
     </button>
 
+    <button id="generateButton">
+        AIで新しい候補を生成
+    </button>
+
+    <div id="generateMessage"></div>
+
     <div id="message"></div>
 
     <div id="candidate"></div>
@@ -161,12 +178,24 @@
             "https://disney-vacancy-func-001-f2dcc2fpg7drfebj.japanwest-01.azurewebsites.net/api/updatePostText?code=RC_FAk7t8fip6czE0AH68qMW6tJUJgEnxNZkyDsxzIVSAzFuYIsh5A==";
 
 
+        // generatePost
+        // ★ここをgeneratePostのFunction Keyに変更してください
+        const GENERATE_POST_API_URL =
+            "https://disney-vacancy-func-001-f2dcc2fpg7drfebj.japanwest-01.azurewebsites.net/api/generatePost?code=FrDQCRAqzraemaoLPElZnAnWCRMeHlQspeUvPD-mSmkdAzFuPtx9zQ==";
+
+
         // =========================================================
         // DOM
         // =========================================================
 
         const loadButton =
             document.getElementById("loadButton");
+
+        const generateButton =
+            document.getElementById("generateButton");
+
+        const generateMessage =
+            document.getElementById("generateMessage");
 
         const message =
             document.getElementById("message");
@@ -180,6 +209,99 @@
         // =========================================================
 
         let currentCandidate = null;
+
+
+        // =========================================================
+        // AIで新しい候補を生成（generatePost手動実行）
+        // =========================================================
+
+        generateButton.addEventListener("click", async () => {
+
+            const confirmed =
+                window.confirm(
+                    "AIで新しい投稿候補を1件生成します。\n" +
+                    "（Gemini・楽天APIを呼び出します）\n\n" +
+                    "よろしいですか？"
+                );
+
+            if (!confirmed) {
+                return;
+            }
+
+            generateButton.disabled = true;
+            generateButton.textContent =
+                "生成中...";
+
+            generateMessage.innerHTML =
+                '<div class="loading">AIが投稿候補を生成しています...</div>';
+
+            try {
+
+                const response =
+                    await fetch(GENERATE_POST_API_URL, {
+                        method: "POST"
+                    });
+
+                const data =
+                    await response.json();
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.detail ||
+                        data.error ||
+                        `HTTPエラー: ${response.status}`
+                    );
+
+                }
+
+                if (
+                    !data.products ||
+                    data.products.length === 0 ||
+                    data.productCount === 0
+                ) {
+
+                    generateMessage.innerHTML = `
+                        <div class="warning">
+                            ${escapeHtml(
+                                data.message ||
+                                "候補が生成されませんでした。"
+                            )}
+                        </div>
+                    `;
+
+                } else {
+
+                    generateMessage.innerHTML = `
+                        <div class="success">
+                            新しい投稿候補を生成しました（キーワード：
+                            ${escapeHtml(data.keyword || "")}）。
+                            「投稿候補を取得」から確認してください。
+                        </div>
+                    `;
+
+                }
+
+            } catch (error) {
+
+                console.error(error);
+
+                generateMessage.innerHTML = `
+                    <div class="error">
+                        候補の生成に失敗しました。<br>
+                        ${escapeHtml(error.message)}
+                    </div>
+                `;
+
+            } finally {
+
+                generateButton.disabled = false;
+                generateButton.textContent =
+                    "AIで新しい候補を生成";
+
+            }
+
+        });
 
 
         // =========================================================
