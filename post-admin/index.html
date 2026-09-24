@@ -49,6 +49,18 @@
             margin-top: 20px;
         }
 
+        #intentTweetLink {
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        #intentTweetLink button {
+            background: #0f1419;
+            color: white;
+            margin-top: 20px;
+            margin-left: 10px;
+        }
+
         #saveButton {
             background: #087f23;
             color: white;
@@ -175,13 +187,13 @@
         // ★ここをupdatePostTextデプロイ後に発行されるFunction Keyに変更してください
         // postTextの更新・却下（status更新）の両方をこのFunctionで担う
         const UPDATE_POST_TEXT_API_URL =
-            "https://disney-vacancy-func-001-f2dcc2fpg7drfebj.japanwest-01.azurewebsites.net/api/updatePostText?code=RC_FAk7t8fip6czE0AH68qMW6tJUJgEnxNZkyDsxzIVSAzFuYIsh5A==";
+            "https://disney-vacancy-func-001-f2dcc2fpg7drfebj.japanwest-01.azurewebsites.net/api/updatePostText?code=ここにFunction Keyを設定";
 
 
         // generatePost
         // ★ここをgeneratePostのFunction Keyに変更してください
         const GENERATE_POST_API_URL =
-            "https://disney-vacancy-func-001-f2dcc2fpg7drfebj.japanwest-01.azurewebsites.net/api/generatePost?code=FrDQCRAqzraemaoLPElZnAnWCRMeHlQspeUvPD-mSmkdAzFuPtx9zQ==";
+            "https://disney-vacancy-func-001-f2dcc2fpg7drfebj.japanwest-01.azurewebsites.net/api/generatePost?code=ここにFunction Keyを設定";
 
 
         // =========================================================
@@ -477,8 +489,22 @@
                             id="postButton"
                             type="button"
                         >
-                            Xに投稿する
+                            Xに投稿する（API）
                         </button>
+
+                        <a
+                            id="intentTweetLink"
+                            href="${
+                                "https://twitter.com/intent/post?text=" +
+                                encodeURIComponent(item.postText || "")
+                            }"
+                            target="_blank"
+                            rel="noopener"
+                        >
+                            <button type="button">
+                                Xで投稿する（無料リンク）
+                            </button>
+                        </a>
 
                         <button
                             id="rejectButton"
@@ -657,6 +683,16 @@
 
                 currentCandidate.postText =
                     newPostText;
+
+
+                const intentTweetLink =
+                    document.getElementById("intentTweetLink");
+
+                if (intentTweetLink) {
+                    intentTweetLink.href =
+                        "https://twitter.com/intent/post?text=" +
+                        encodeURIComponent(newPostText);
+                }
 
 
                 showSaveMessage(
