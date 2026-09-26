@@ -254,9 +254,13 @@ function collectPlansFor(ymd) {
 
 // Xシェア用のIntent URLを作成
 function buildShareIntentUrl(hotelName, ymd, planName, planUrl){
+  const [y, m, d] = ymd.split('-').map(Number);
+  const w = weekday[new Date(y, m - 1, d).getDay()];
+  const dateWithWeekday = `${ymd}(${w})`;
+
   const text =
     `🎉${hotelName}に空室発見！\n` +
-    `📅${ymd}\n` +
+    `📅${dateWithWeekday}\n` +
     `🎫${planName}\n\n` +
     `詳細・予約はこちら👇`;
 
