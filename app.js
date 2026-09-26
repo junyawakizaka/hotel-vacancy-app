@@ -252,6 +252,22 @@ function collectPlansFor(ymd) {
   return list;
 }
 
+// Xシェア用のIntent URLを作成
+function buildShareIntentUrl(hotelName, ymd, planName, planUrl){
+  const text =
+    `🎉${hotelName}に空室発見！\n` +
+    `📅${ymd}\n` +
+    `🎫${planName}\n\n` +
+    `詳細・予約はこちら👇`;
+
+  const params = new URLSearchParams({
+    text: text,
+    url: planUrl
+  });
+
+  return `https://twitter.com/intent/tweet?${params.toString()}`;
+}
+
 function renderPlans() {
   const elTitle = document.getElementById('plansTitle');
   const elList = document.getElementById('plansList');
@@ -277,12 +293,15 @@ function renderPlans() {
     scroll.className = 'plan-scroll';
 
     for (const p of hp.plans) {
+      const shareUrl = buildShareIntentUrl(hp.hotel.name, selectedDate, p.planName, p.url);
+
       const card = document.createElement('div');
       card.className = 'plan-card';
       card.innerHTML = `
         <div class="pn">${escapeHTML(p.planName)}</div>
         <div class="actions">
           <a class="link" href="${p.url}" target="_blank" rel="noopener">楽天で予約</a>
+          <a class="link share-x" href="${shareUrl}" target="_blank" rel="noopener">Xでシェア</a>
         </div>
       `;
       scroll.appendChild(card);
