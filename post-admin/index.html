@@ -51,7 +51,7 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
-        .url-input-section #productUrlInput {
+        .url-input-section input[type="text"] {
             width: 100%;
             box-sizing: border-box;
             padding: 10px;
@@ -59,6 +59,7 @@
             border: 1px solid #ccc;
             border-radius: 5px;
             margin-top: 5px;
+            margin-bottom: 10px;
         }
 
         #generateFromUrlButton {
@@ -200,7 +201,15 @@
         <input
             type="text"
             id="productUrlInput"
-            placeholder="https://item.rakuten.co.jp/ショップコード/商品コード/"
+            placeholder="https://item.rakuten.co.jp/ショップコード/... または hb.afl.rakuten.co.jp/... のアフィリエイトURL"
+        />
+        <div class="label">
+            商品名（必須・店舗内検索のキーワードとして使用します）
+        </div>
+        <input
+            type="text"
+            id="productNameInput"
+            placeholder="例：ミッキーモチーフ マグカップ"
         />
         <button id="generateFromUrlButton">
             このURLで作成する
@@ -262,6 +271,9 @@
 
         const productUrlInput =
             document.getElementById("productUrlInput");
+
+        const productNameInput =
+            document.getElementById("productNameInput");
 
         const generateFromUrlButton =
             document.getElementById("generateFromUrlButton");
@@ -385,6 +397,9 @@
             const productUrl =
                 productUrlInput.value.trim();
 
+            const productName =
+                productNameInput.value.trim();
+
             if (!productUrl) {
 
                 generateFromUrlMessage.innerHTML = `
@@ -396,12 +411,23 @@
                 return;
             }
 
+            if (!productName) {
+
+                generateFromUrlMessage.innerHTML = `
+                    <div class="error">
+                        商品名を入力してください（店舗内検索のキーワードとして必須です）。
+                    </div>
+                `;
+
+                return;
+            }
+
             generateFromUrlButton.disabled = true;
             generateFromUrlButton.textContent =
                 "作成中...";
 
             generateFromUrlMessage.innerHTML =
-                '<div class="loading">商品情報を取得し、投稿文を作成しています...</div>';
+                '<div class="loading">店舗内を検索し、投稿文を作成しています...</div>';
 
             try {
 
@@ -413,7 +439,8 @@
                                 "application/json"
                         },
                         body: JSON.stringify({
-                            productUrl: productUrl
+                            productUrl: productUrl,
+                            productName: productName
                         })
                     });
 
@@ -439,6 +466,7 @@
                 `;
 
                 productUrlInput.value = "";
+                productNameInput.value = "";
 
             } catch (error) {
 
