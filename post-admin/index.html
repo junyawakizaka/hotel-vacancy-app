@@ -43,6 +43,35 @@
             cursor: not-allowed;
         }
 
+        .url-input-section {
+            background: white;
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin-top: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .url-input-section #productUrlInput {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            font-size: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-top: 5px;
+        }
+
+        #generateFromUrlButton {
+            background: #6f42c1;
+            color: white;
+            margin-top: 10px;
+        }
+
+        #generateFromUrlButton:disabled {
+            background: #aaa;
+            cursor: not-allowed;
+        }
+
         #postButton {
             background: #1d9bf0;
             color: white;
@@ -164,6 +193,21 @@
 
     <div id="generateMessage"></div>
 
+    <div class="url-input-section">
+        <div class="label">
+            商品URLを指定して投稿文を作成
+        </div>
+        <input
+            type="text"
+            id="productUrlInput"
+            placeholder="https://item.rakuten.co.jp/ショップコード/商品コード/"
+        />
+        <button id="generateFromUrlButton">
+            このURLで作成する
+        </button>
+        <div id="generateFromUrlMessage"></div>
+    </div>
+
     <div id="message"></div>
 
     <div id="candidate"></div>
@@ -173,7 +217,7 @@
         // API URL
         // =========================================================
 
-        // getPostCandidates
+// getPostCandidates
         const GET_CANDIDATES_API_URL =
             "https://disney-vacancy-func-001-f2dcc2fpg7drfebj.japanwest-01.azurewebsites.net/api/getPostCandidates?code=RGZdXNQeT1C6YJzygPlhpkcyLUhgmSesuBaMmxYFGQXLAzFuDnNJRg==";
 
@@ -196,6 +240,13 @@
             "https://disney-vacancy-func-001-f2dcc2fpg7drfebj.japanwest-01.azurewebsites.net/api/generatePost?code=FrDQCRAqzraemaoLPElZnAnWCRMeHlQspeUvPD-mSmkdAzFuPtx9zQ==";
 
 
+
+        // generatePostFromUrl
+        // ★ここをgeneratePostFromUrlのFunction Keyに変更してください
+        const GENERATE_POST_FROM_URL_API_URL =
+            "https://disney-vacancy-func-001-f2dcc2fpg7drfebj.japanwest-01.azurewebsites.net/api/generatePostFromUrl?code=https://disney-vacancy-func-001-f2dcc2fpg7drfebj.japanwest-01.azurewebsites.net/api/generatePostFromUrl?code=rRAH_lz_7oDpMEe_qTo_F1pP5ViIkLSipobCk6yDD5xsAzFuF2X1eQ==";
+
+
         // =========================================================
         // DOM
         // =========================================================
@@ -208,6 +259,15 @@
 
         const generateMessage =
             document.getElementById("generateMessage");
+
+        const productUrlInput =
+            document.getElementById("productUrlInput");
+
+        const generateFromUrlButton =
+            document.getElementById("generateFromUrlButton");
+
+        const generateFromUrlMessage =
+            document.getElementById("generateFromUrlMessage");
 
         const message =
             document.getElementById("message");
@@ -310,6 +370,92 @@
                 generateButton.disabled = false;
                 generateButton.textContent =
                     "AIで新しい候補を生成";
+
+            }
+
+        });
+
+
+        // =========================================================
+        // 商品URLを指定して投稿候補を作成（generatePostFromUrl）
+        // =========================================================
+
+        generateFromUrlButton.addEventListener("click", async () => {
+
+            const productUrl =
+                productUrlInput.value.trim();
+
+            if (!productUrl) {
+
+                generateFromUrlMessage.innerHTML = `
+                    <div class="error">
+                        商品URLを入力してください。
+                    </div>
+                `;
+
+                return;
+            }
+
+            generateFromUrlButton.disabled = true;
+            generateFromUrlButton.textContent =
+                "作成中...";
+
+            generateFromUrlMessage.innerHTML =
+                '<div class="loading">商品情報を取得し、投稿文を作成しています...</div>';
+
+            try {
+
+                const response =
+                    await fetch(GENERATE_POST_FROM_URL_API_URL, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+                        body: JSON.stringify({
+                            productUrl: productUrl
+                        })
+                    });
+
+                const data =
+                    await response.json();
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.detail ||
+                        data.error ||
+                        `HTTPエラー: ${response.status}`
+                    );
+
+                }
+
+                generateFromUrlMessage.innerHTML = `
+                    <div class="success">
+                        投稿候補を作成しました（商品：
+                        ${escapeHtml(data.productName || "")}）。
+                        「投稿候補を取得」から確認してください。
+                    </div>
+                `;
+
+                productUrlInput.value = "";
+
+            } catch (error) {
+
+                console.error(error);
+
+                generateFromUrlMessage.innerHTML = `
+                    <div class="error">
+                        投稿候補の作成に失敗しました。<br>
+                        ${escapeHtml(error.message)}
+                    </div>
+                `;
+
+            } finally {
+
+                generateFromUrlButton.disabled = false;
+                generateFromUrlButton.textContent =
+                    "このURLで作成する";
 
             }
 
